@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학생 건강 통합 문진표 (중고등부)</title>
+    <style>
+        body { 
+            font-family: 'Malgun Gothic', sans-serif; 
+            background-color: #f4f6f7; 
+            padding: 15px; 
+            margin: 0;
+        }
+        .container { 
+            max-width: 650px; 
+            margin: auto; 
+            background: white; 
+            padding: 25px 20px; 
+            border-radius: 15px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            box-sizing: border-box;
+        }
+        h1 { 
+            text-align: center; 
+            color: white; 
+            font-size: 26px; 
+            margin-bottom: 25px;
+            background-color: #25ac5d;           
+            padding: 20px 20px;
+            margin: -25px -20px 25px -20px;     
+            border-radius: 15px 15px 0 0;      
+        }
+        h2 { color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin-top: 30px; font-size: 20px; }
+        h3 { font-size: 18px; color: #444; }
+        .section { margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 10px; background: #fafafa; }
+        label { display: block; margin-top: 12px; font-weight: bold; font-size: 16px; color: #444; }
+
+        /* 텍스트 입력창, 선택창 크기 및 글자 확대 */
+        input[type="text"], input[type="number"], select {
+            width: 100%; 
+            padding: 12px; 
+            margin-top: 8px; 
+            box-sizing: border-box; 
+            border: 1px solid #ccc; 
+            border-radius: 6px;
+            font-size: 16px; /* 모바일에서 자동 확대(줌인) 현상 방지 및 가독성 확보 */
+        }
+        
+        /* 라디오 및 체크박스 라벨 크기 키우기 */
+        .section label input[type="radio"], 
+        .section label input[type="checkbox"],
+        .checkbox-group label input {
+            transform: scale(1.2);
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        .section label {
+            display: inline-block;
+            margin-right: 15px;
+            font-weight: normal;
+            font-size: 16px;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+        /* 기본 블록 레이블 스타일 유지 */
+        .section > label, .sub-q > label { display: block; font-weight: bold; margin-bottom: 5px; }
+
+        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .checkbox-group label { margin: 0; padding: 8px 0; }
+
+        /* 통증 척도 모바일 최적화 */
+        .pain-scale { display: flex; justify-content: space-between; margin: 15px 0; background: #fff; padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
+        .pain-option { text-align: center; font-size: 14px; flex: 1; }
+        .pain-option input[type="radio"] { transform: scale(1.3); margin-bottom: 5px; }
+        
+        /* 제출하기 버튼 확대 */
+        button { width: 100%; padding: 16px; background: #28a745; color: white; border: none; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 25px; }
+        
+        .info-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+        .info-box { flex: 1; min-width: 140px; }
+        
+        /* 질문 간의 정돈된 간격을 위한 스타일 추가 */
+        .sub-q { margin-bottom: 22px; }
+        
+        /* 동의 사항 문구 크기 조정 */
+        .consent-text { color: red; font-size: 14px; line-height: 1.5; margin-top: 15px; font-weight: bold; }
+       
+       
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🏥 학생 건강상태 문진</h1>
+
+    <form id="healthForm">
+        <h2>기본 정보</h2>
+        <div class="section">
+            <div class="info-row">
+                <div class="info-box">
+                    <label>학년</label>
+                    <select id="common_grade" required>
+                        <option value="">선택</option>
+                        <option value="1학년">1학년</option>
+                        <option value="2학년">2학년</option>
+                        <option value="3학년">3학년</option>
+                        <option value="4학년">4학년</option>
+                        <option value="5학년">5학년</option>
+                        <option value="6학년">6학년</option>
+                    </select>
+                </div>
+                <div class="info-box">
+                    <label>반</label>
+                    <select id="common_class" required>
+                        <option value="">선택</option>
+                        <option value="1반">1반</option>
+                        <option value="2반">2반</option>
+                        <option value="3반">3반</option>
+                        <option value="4반">4반</option>
+                        <option value="5반">5반</option>
+                        <option value="6반">6반</option>
+                        <option value="7반">7반</option>
+                        <option value="8반">8반</option>
+                        <option value="9반">9반</option>
+                        <option value="10반">10반</option>
+                    </select>
+                </div>
+                <div class="info-box">
+                    <label>이름</label>
+                    <input type="text" id="common_name" required>
+                </div>
+            </div>
+            <label>체온(℃)</label>
+            <input type="number" step="0.1" id="common_temp" required>
+        </div>
+
+        <h2>증상 선택</h2>
+        <div class="section">
+            <label>오늘 아픈 증상을 선택하세요</label>
+            <div style="margin-top: 10px;">
+                <label><input type="radio" name="main_symptom" value="headache" onchange="renderDetail('headache')" required> 두통</label>
+                <label><input type="radio" name="main_symptom" value="stomachache" onchange="renderDetail('stomachache')"> 복통</label>
+                <label><input type="radio" name="main_symptom" value="both" onchange="renderDetail('both')"> 두통과 복통</label>
+                <label><input type="radio" name="main_symptom" value="cold" onchange="renderDetail('cold')"> 감기</label>
+            </div>
+        </div>
+
+        <div id="detailSection" class="section" style="display:none;"></div>
+
+        <h2>약물 및 동의 사항</h2>
+        <div class="section">
+            <label>약물 알러지가 있나요?</label>
+            <input type="text" id="common_allergy" placeholder="없음 또는 약 이름">
+            
+            <label>오늘 복용한 약(이름, 시각)</label>
+            <input type="text" id="common_meds">
+            
+            <p class="consent-text">모든 약은 간독성, 신독성, 호흡곤란, 울렁거림 등의 부작용이 있을 수 있음을 확인했으며, 그래도 약 복용을 원합니다.</p>
+            <div style="margin-top: 10px;">
+                <label><input type="radio" name="consent" value="네" required> 네</label>
+                <label><input type="radio" name="consent" value="아니요"> 아니요</label>
+            </div>
+        </div>
+
+        <button type="submit" id="submitBtn">제 출 하 기</button>
+    </form>
+</div>
+
+<script>
+     const supabase = supabase.createClient('URL', 'KEY');
+
+        // 수정 코드 (안전!)
+        // process.env는 Vercel이 나중에 넣어줄 값입니다.
+        const supabase = supabase.createClient(
+        process.env.SUPABASE_URL, 
+        process.env.SUPABASE_KEY
+        );
+
+
+    // 통증 척도 버튼 생성 함수
+    function getPainScale(prefix) {
+        let html = '<div class="pain-scale">';
+        for(let i=1; i<=10; i++) {
+            html += `<div class="pain-option">
+                        <input type="radio" name="${prefix}_pain" value="${i}">
+                        <br>${i}
+                     </div>`;
+        }
+        return html + '</div>';
+    }
+
+    // 상세 질문 HTML 템플릿
+    const headacheHTML = `
+        <h3>두통 상세</h3>
+        <div class="sub-q"><label>통증 정도 (1경도~10심함)</label>${getPainScale('h')}</div>
+        <div class="sub-q"><label>수면 시간 (시간)</label><input type="number" id="h_sleep_time" placeholder="어제 잔 시간(예: 7)"></div>
+        <div class="sub-q"><label>언제부터 아팠나요?</label><input type="text" id="h_start" placeholder="예: 아침, 2교시"></div>
+        <div class="sub-q"><label>유전성 두통이 있나요?</label><select id="h_genetic"><option value="아니요">아니요</option><option value="예">예</option></select></div>
+        <div class="sub-q"><label>두통으로 진료받았는지 여부 </label><select id="h_history"><option value="아니요">아니요</option><option value="예">예</option></select></div>
+        <div class="sub-q"><label>최근 스트레스 여부</label><select id="h_stress"><option value="아니요">아니요</option><option value="예">예</option></select></div>
+        <div class="sub-q"><label>추위에 노출 여부</label><select id="h_cold"><option value="아니요">아니요</option><option value="예">예</option></select></div>
+        <div class="sub-q"><label>머리 충격 여부</label><select id="h_impact"><option value="아니요">아니요</option><option value="예">예</option></select></div>
+        <div class="sub-q"><label>수면 부족 여부</label><select id="h_sleep_lack"><option value="아니요">아니요</option><option value="예">예</option></select></div>
+        <div class="sub-q"><label>편두통 진단 여부</label><select id="h_migraine"><option value="아니요">아니요</option><option value="예">예</option></select></div>
+        <div class="sub-q"><label>생리 여부</label><select id="h_period"><option value="해당 없음">해당 없음</option><option value="생리 전">생리 전</option><option value="생리 중">생리 중</option><option value="생리 끝">생리 끝</option></select></div>
+    `;
+
+    const stomachacheHTML = `
+        <h3>복통 상세</h3>
+        <div class="sub-q"><label>통증 정도 (1경도~10심함)</label>${getPainScale('s')}</div>
+        <div class="sub-q"><label>언제부터 아팠나요?</label><input type="text" id="s_start" placeholder="예: 2교시"></div>
+        <div class="sub-q"><label>배 아프기 전에 먹은 음식</label><input type="text" id="s_food" placeholder="최근 먹은 음식"></div>
+        <div class="sub-q">
+            <label>복통 양상 (중복 선택 가능)</label>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="s_type" value="콕콕 쑤심"> 콕콕 쑤심</label>
+                <label><input type="checkbox" name="s_type" value="찌르듯"> 찌르듯</label>
+                <label><input type="checkbox" name="s_type" value="꼬이듯"> 꼬이듯</label>
+                <label><input type="checkbox" name="s_type" value="쥐어짜는 듯"> 쥐어짜는 듯</label>
+                <label><input type="checkbox" name="s_type" value="더부룩함"> 더부룩함</label>
+                <label><input type="checkbox" name="s_type" value="답답"> 답답</label>
+                <label><input type="checkbox" name="s_type" value="부글부글 끓듯"> 부글부글 끓듯</label>
+                <label><input type="checkbox" name="s_type" value="울렁거림"> 울렁거림</label>
+                <label><input type="checkbox" name="s_type" value="토할 것 같음"> 토할 것 같음</label>
+            </div>
+        </div>
+        <div class="sub-q"><label>통증 부위</label><select id="s_area"><option value="복부 오른쪽">복부 오른쪽</option><option value="복부 왼쪽">복부 왼쪽</option><option value="배 중앙">배 중앙</option><option value="명치">명치</option><option value="복부 전체">복부 전체</option></select></div>
+        <div class="sub-q"><label>생리 여부</label><select id="s_period"><option value="해당 없음">해당 없음</option><option value="생리 전">생리 전</option><option value="생리 중">생리 중</option><option value="생리 끝">생리 끝</option></select></div>
+    `;
+
+    const coldHTML = `
+        <h3>감기 상세</h3>
+        <div class="sub-q">
+            <label>증상 (중복 선택)</label>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="cold_sym" value="기침"> 기침</label>
+                <label><input type="checkbox" name="cold_sym" value="인후통"> 인후통</label>
+                <label><input type="checkbox" name="cold_sym" value="콧물"> 콧물</label>
+                <label><input type="checkbox" name="cold_sym" value="코막힘"> 코막힘</label>
+                <label><input type="checkbox" name="cold_sym" value="발열"> 발열</label>
+            </div>
+        </div>
+        <div class="sub-q"><label>언제부터 시작되었나요?</label><input type="text" id="c_start" placeholder="예: 어제, 3교시"></div>
+    `;
+
+    // 렌더링 함수
+    function renderDetail(type) {
+        const container = document.getElementById('detailSection');
+        container.style.display = 'block';
+        if (type === 'headache') container.innerHTML = headacheHTML;
+        else if (type === 'stomachache') container.innerHTML = stomachacheHTML;
+        else if (type === 'both') container.innerHTML = headacheHTML + '<hr>' + stomachacheHTML;
+        else if (type === 'cold') container.innerHTML = coldHTML;
+    }
+
+    document.getElementById('healthForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerText = "전송 중...";
+
+        // 1. 기본 데이터 수집
+        const surveyData = {
+            type: 'secondary',
+            grade: document.getElementById('common_grade').value,
+            class_name: document.getElementById('common_class').value,
+            student_name: document.getElementById('common_name').value,
+            symptom: document.querySelector('input[name="main_symptom"]:checked')?.value || "기타",
+            answers: {
+                "체온": document.getElementById('common_temp').value + "°C",
+                "알러지 약물": document.getElementById('common_allergy').value.trim() || "없음",
+                "오늘 복용한 약(이름, 시각)": document.getElementById('common_meds').value.trim() || "없음",
+                "약물동의 여부": document.querySelector('input[name="consent"]:checked')?.value || "아니오"
+            },
+            details: {}
+        };
+
+        // 2. 상세 문진 데이터(detailSection) 수집
+        const detailSection = document.getElementById('detailSection');
+        if (detailSection.style.display !== 'none') {
+            const fieldMap = {
+                'h_sleep_time': '수면 시간',
+                'h_start': '두통 시작 시간',
+                'h_genetic': '유전성 두통',
+                'h_history': '두통 진료 기록',
+                'h_stress': '스트레스 여부',
+                'h_cold': '추위 노출 여부',
+                'h_impact': '머리 충격 여부',
+                'h_sleep_lack': '수면 부족 여부',
+                'h_migraine': '편두통 진단 여부',
+                'h_period': '생리 여부',
+                's_start': '복통 시작 시간',
+                's_food': '먹은 음식',
+                's_area': '통증 부위',
+                's_period': '생리 여부',
+                'c_start': '감기 시작 시간'
+            };
+
+            // 텍스트/셀렉트 입력값 수집
+            for (let id in fieldMap) {
+                const el = document.getElementById(id);
+                if (el && el.value.trim() !== "") {
+                    surveyData.answers[fieldMap[id]] = el.value;
+                }
+            }
+
+            // 라디오 버튼 수집 (통증 척도 h_pain, s_pain)
+            const radios = detailSection.querySelectorAll('input[type="radio"]:checked');
+            radios.forEach(r => {
+                if(r.name === 'h_pain') surveyData.answers["두통 통증 정도"] = r.value;
+                if(r.name === 's_pain') surveyData.answers["복통 통증 정도"] = r.value;
+            });
+
+            // 체크박스 수집 (복통 양상, 감기 증상 단일 창구 통합 처리)
+            const checkboxes = detailSection.querySelectorAll('input[type="checkbox"]:checked');
+            let stomachType = [];
+            let coldSym = [];
+            checkboxes.forEach(c => {
+                if(c.name === 's_type') stomachType.push(c.value);
+                if(c.name === 'cold_sym') coldSym.push(c.value);
+            });
+            if(stomachType.length > 0) surveyData.answers["복통 양상"] = stomachType.join(', ');
+            if(coldSym.length > 0) surveyData.answers["감기 증상"] = coldSym.join(', ');
+        }
+
+        // 3. 서버 전송
+        try {
+        // Supabase로 데이터 삽입
+        const { error } = await supabase
+            .from('health_records')
+            .insert([{
+                school_name: localStorage.getItem("mySchool") || "미지정",
+                student_name: surveyData.student_name,
+                grade: surveyData.grade,
+                class_name: surveyData.class_name,
+                symptom: surveyData.symptom,
+                answers: surveyData.answers, // JSONB 컬럼에 설문 답변 전체 저장
+                details: surveyData.details    // (필요 시 활용)
+            }]);
+
+        if (error) throw error;
+        
+        alert("기록이 성공적으로 보건실로 전달되었습니다!");
+        document.getElementById('healthForm').reset();
+        document.getElementById('detailSection').style.display = 'none';
+        
+    } catch (error) {
+        console.error("Supabase 에러:", error);
+        alert(`저장 오류: ${error.message}`);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "제 출 하 기";
+    }
+});
+</script>
+</body>
+</html>
