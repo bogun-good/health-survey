@@ -3,173 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>학생 건강 상태 문진</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>학생 건강 상태 문진 (초등)</title>
     <style>
-        body {
-            font-family: 'Malgun Gothic', sans-serif;
-            background-color: #f4f7f6;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 500px;
-        }
-        h2 {
-            color: white;
-            text-align: center;
-            background-color: #25a55b;
-            padding: 18px 30px;
-            margin: -30px -30px 25px -30px;
-            border-radius: 12px 12px 0 0;
-        }
-        .form-group {
-            margin-bottom: 18px;
-        }
-        .row-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1.5fr;
-            gap: 10px;
-        }
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: bold;
-            color: #34495e;
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 15px;
-        }
-        .part-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .part-label {
-            cursor: pointer;
-        }
-        .part-box {
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 12px 5px;
-            text-align: center;
-            background-color: #fafafa;
-            font-weight: bold;
-            font-size: 15px;
-            transition: all 0.2s;
-        }
-        .part-label:hover .part-box {
-            background-color: #f0f0f0;
-        }
-        .part-container input[type="radio"] {
-            display: none;
-        }
-        .part-container input[type="radio"]:checked + .part-box {
-            border-color: #e74c3c;
-            background-color: #fdedec;
-            color: #e74c3c;
-        }
-        .detail-box {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 18px;
-            display: none;
-            margin-top: 15px;
-        }
-        .sub-q {
-            margin-bottom: 15px;
-        }
-        .sub-q:last-child {
-            margin-bottom: 0;
-        }
-        .sub-q label {
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 4px;
-        }
-        .radio-inline {
-            display: flex;
-            gap: 15px;
-            margin-top: 4px;
-            flex-wrap: wrap;
-        }
-        .radio-inline label {
-            font-weight: normal;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-        }
-        .radio-inline input[type="radio"] {
-            width: auto;
-        }
-        button {
-            width: 100%;
-            padding: 14px;
-            background-color: #27be66;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 20px;
-        }
-        button:hover {
-            background-color: #27ae60;
-        }
-        button:disabled {
-            background-color: #95a5a6;
-            cursor: not-allowed;
-        }
+        body { font-family: 'Malgun Gothic', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 520px; }
+        h2 { color: white; text-align: center; background-color: #25a55b; padding: 18px 30px; margin: -30px -30px 25px -30px; border-radius: 12px 12px 0 0; font-size: 20px; }
+        .form-group { margin-bottom: 18px; }
+        .row-group { display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 10px; }
+        label { display: block; margin-bottom: 6px; font-weight: bold; color: #34495e; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 15px; }
+        .part-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
+        .part-label { cursor: pointer; }
+        .part-box { border: 2px solid #e0e0e0; border-radius: 8px; padding: 12px 5px; text-align: center; background-color: #fafafa; font-weight: bold; font-size: 15px; transition: all 0.2s; }
+        .part-label:hover .part-box { background-color: #f0f0f0; }
+        .part-container input[type="radio"] { display: none; }
+        .part-container input[type="radio"]:checked + .part-box { border-color: #e74c3c; background-color: #fdedec; color: #e74c3c; }
+        .detail-box { background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 18px; display: none; margin-top: 15px; }
+        .sub-q { margin-bottom: 15px; }
+        .sub-q label { font-weight: 600; color: #2c3e50; margin-bottom: 4px; }
+        .radio-inline { display: flex; gap: 15px; margin-top: 4px; flex-wrap: wrap; }
+        .radio-inline label { font-weight: normal; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .radio-inline input[type="radio"] { width: auto; }
+        button { width: 100%; padding: 14px; background-color: #27be66; color: white; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        button:hover { background-color: #27ae60; }
+        button:disabled { background-color: #95a5a6; cursor: not-allowed; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>🏥 학생 건강상태 문진</h2>
+        <h2>🏥 학생 건강상태 문진 (초등)</h2>
         <form id="healthForm">
             <div class="row-group">
                 <div class="form-group">
                     <label for="grade">학년</label>
                     <select id="grade" required>
                         <option value="">선택</option>
-                        <option value="1학년">1학년</option>
-                        <option value="2학년">2학년</option>
-                        <option value="3학년">3학년</option>
-                        <option value="4학년">4학년</option>
-                        <option value="5학년">5학년</option>
-                        <option value="6학년">6학년</option>
+                        <option value="1학년">1학년</option><option value="2학년">2학년</option><option value="3학년">3학년</option>
+                        <option value="4학년">4학년</option><option value="5학년">5학년</option><option value="6학년">6학년</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="class_name">반</label>
                     <select id="class_name" required>
                         <option value="">선택</option>
-                        <option value="1반">1반</option>
-                        <option value="2반">2반</option>
-                        <option value="3반">3반</option>
-                        <option value="4반">4반</option>
-                        <option value="5반">5반</option>
-                        <option value="6반">6반</option>
-                        <option value="7반">7반</option>
-                        <option value="8반">8반</option>
-                        <option value="9반">9반</option>
-                        <option value="10반">10반</option>
+                        <option value="1반">1반</option><option value="2반">2반</option><option value="3반">3반</option>
+                        <option value="4반">4반</option><option value="5반">5반</option><option value="6반">6반</option>
+                        <option value="7반">7반</option><option value="8반">8반</option><option value="9반">9반</option><option value="10반">10반</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -177,29 +56,25 @@
                     <input type="text" id="student_name" placeholder="이름" required>
                 </div>
             </div>
-            
+
             <div class="form-group">
-                <label for="allergy">약, 음식 알러지가 있다면 적어주세요.</label>
-                <div style="display: flex; gap: 10px; margin-bottom: 5px;">
-                    <label style="font-weight: normal;">
-                        <input type="radio" name="allergy_type" value="없음" checked style="width: auto;"> 없음
-                    </label>
-                    <label style="font-weight: normal;">
-                        <input type="radio" name="allergy_type" value="있음" style="width: auto;"> 있음
-                    </label>
+                <label>약, 음식 알러지가 있다면 적어주세요.</label>
+                <div style="display:flex; gap:10px; margin-bottom:5px;">
+                    <label style="font-weight:normal;"><input type="radio" name="allergy_type" value="없음" checked style="width:auto;"> 없음</label>
+                    <label style="font-weight:normal;"><input type="radio" name="allergy_type" value="있음" style="width:auto;"> 있음</label>
                 </div>
-                <input type="text" id="allergy_detail" name="allergy_detail" placeholder="약, 음식명: (있을 경우 작성)">
+                <input type="text" id="allergy_detail" placeholder="약, 음식명 (있을 경우 작성)">
             </div>
 
             <div class="form-group">
                 <label>어디가 아픈가요?</label>
                 <div class="part-container">
-                    <label class="part-label"><input type="radio" name="body_part" value="다쳤어요" onchange="showDetail('injury')" required><div class="part-box">🩹 다쳤어요</div></label>
-                    <label class="part-label"><input type="radio" name="body_part" value="복통" onchange="showDetail('stomach')"><div class="part-box">🤢 배</div></label>
-                    <label class="part-label"><input type="radio" name="body_part" value="머리(두통)" onchange="showDetail('head')"><div class="part-box">🤕 머리</div></label>
-                    <label class="part-label"><input type="radio" name="body_part" value="눈" onchange="showDetail('eye')"><div class="part-box">👀 눈</div></label>
-                    <label class="part-label"><input type="radio" name="body_part" value="숨쉬기" onchange="showDetail('breathing')"><div class="part-box">🫁 숨쉬기</div></label>
-                    <label class="part-label"><input type="radio" name="body_part" value="기타" onchange="showDetail('etc')"><div class="part-box">✨ 기타</div></label>
+                    <label class="part-label"><input type="radio" name="body_part" value="다쳤어요" required><div class="part-box">🩹 다쳤어요</div></label>
+                    <label class="part-label"><input type="radio" name="body_part" value="복통"><div class="part-box">🤢 배</div></label>
+                    <label class="part-label"><input type="radio" name="body_part" value="머리(두통)"><div class="part-box">🤕 머리</div></label>
+                    <label class="part-label"><input type="radio" name="body_part" value="눈"><div class="part-box">👀 눈</div></label>
+                    <label class="part-label"><input type="radio" name="body_part" value="숨쉬기"><div class="part-box">🫁 숨쉬기</div></label>
+                    <label class="part-label"><input type="radio" name="body_part" value="기타"><div class="part-box">✨ 기타</div></label>
                 </div>
             </div>
 
@@ -215,229 +90,216 @@
                 </div>
                 <div class="sub-q"><label>통증 정도 (1약함 ~ 5심함)</label>
                     <div class="radio-inline">
-                        <label><input type="radio" name="injury_pain" value="1(약한 아픔)"> 1(약한 아픔)</label>
-                        <label><input type="radio" name="injury_pain" value="2(불편한 아픔)"> 2(불편한 아픔)</label>
-                        <label><input type="radio" name="injury_pain" value="3(많이 아픔)"> 3(많이 아픔)</label>
-                        <label><input type="radio" name="injury_pain" value="4(심한 통증)"> 4(심한 통증)</label>
-                        <label><input type="radio" name="injury_pain" value="5(극심한 통증)"> 5(극심한 통증)</label>
+                        <label><input type="radio" name="injury_pain" value="1(약한 아픔)">1</label>
+                        <label><input type="radio" name="injury_pain" value="2(불편한 아픔)">2</label>
+                        <label><input type="radio" name="injury_pain" value="3(많이 아픔)">3</label>
+                        <label><input type="radio" name="injury_pain" value="4(심한 통증)">4</label>
+                        <label><input type="radio" name="injury_pain" value="5(극심한 통증)">5</label>
                     </div>
                 </div>
-            </div> <div id="detail-stomach" class="detail-box">
+            </div>
+
+            <div id="detail-stomach" class="detail-box">
                 <div class="sub-q"><label>언제부터 아팠나요?</label><input type="text" name="stomach_1" placeholder="예: 집에서"></div>
                 <div class="sub-q"><label>배가 아파서 약을 먹고 왔나요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="stomach_2" value="네"> 네</label><label><input type="radio" name="stomach_2" value="아니오"> 아니오</label></div>
+                    <div class="radio-inline"><label><input type="radio" name="stomach_2" value="네">네</label><label><input type="radio" name="stomach_2" value="아니오">아니오</label></div>
                 </div>
-                <div class="sub-q"><label>어디가 가장 아픈가요?</label><input type="text" name="stomach_3" placeholder="예: 배 오른쪽, 배 중앙"></div>
+                <div class="sub-q"><label>어디가 가장 아픈가요?</label><input type="text" name="stomach_3" placeholder="예: 배 오른쪽"></div>
                 <div class="sub-q"><label>토하거나 설사했나요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="stomach_4" value="토했음"> 토함</label><label><input type="radio" name="stomach_4" value="설사했음"> 설사</label><label><input type="radio" name="stomach_4" value="안했음"> 안함</label></div>
+                    <div class="radio-inline"><label><input type="radio" name="stomach_4" value="토했음">토함</label><label><input type="radio" name="stomach_4" value="설사했음">설사</label><label><input type="radio" name="stomach_4" value="안했음">안함</label></div>
                 </div>
                 <div class="sub-q"><label>속이 울렁거리고 토할 것 같나요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="stomach_5" value="네"> 네</label><label><input type="radio" name="stomach_5" value="아니오"> 아니오</label></div>
+                    <div class="radio-inline"><label><input type="radio" name="stomach_5" value="네">네</label><label><input type="radio" name="stomach_5" value="아니오">아니오</label></div>
                 </div>
                 <div class="sub-q"><label>어제 많이 먹었거나 맵거나 기름진 음식을 먹었나요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="stomach_6" value="네"> 네</label><label><input type="radio" name="stomach_6" value="아니오"> 아니오</label></div>
+                    <div class="radio-inline"><label><input type="radio" name="stomach_6" value="네">네</label><label><input type="radio" name="stomach_6" value="아니오">아니오</label></div>
                 </div>
                 <div class="sub-q"><label>생리로 인한 통증인가요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="stomach_7" value="네"> 네</label><label><input type="radio" name="stomach_7" value="아니오"> 아니오</label></div>
+                    <div class="radio-inline"><label><input type="radio" name="stomach_7" value="네">네</label><label><input type="radio" name="stomach_7" value="아니오">아니오</label></div>
                 </div>
-                <div class="sub-q"><label>통증 정도 (1약함 ~ 5심함)</label>
+                <div class="sub-q"><label>통증 정도 (1~5)</label>
                     <div class="radio-inline">
-                        <label><input type="radio" name="stomach_pain" value="1(약한 아픔)"> 1(약한 아픔)</label>
-                        <label><input type="radio" name="stomach_pain" value="2(불편한 아픔)"> 2(불편한 아픔)</label>
-                        <label><input type="radio" name="stomach_pain" value="3(많이 아픔)"> 3(많이 아픔)</label>
-                        <label><input type="radio" name="stomach_pain" value="4(심한 통증)"> 4(심한 통증)</label>
-                        <label><input type="radio" name="stomach_pain" value="5(극심한 통증)"> 5(극심한 통증)</label>
+                        <label><input type="radio" name="stomach_pain" value="1(약한 아픔)">1</label>
+                        <label><input type="radio" name="stomach_pain" value="2(불편한 아픔)">2</label>
+                        <label><input type="radio" name="stomach_pain" value="3(많이 아픔)">3</label>
+                        <label><input type="radio" name="stomach_pain" value="4(심한 통증)">4</label>
+                        <label><input type="radio" name="stomach_pain" value="5(극심한 통증)">5</label>
                     </div>
                 </div>
-            </div> <div id="detail-head" class="detail-box">
+            </div>
+
+            <div id="detail-head" class="detail-box">
                 <div class="sub-q"><label>언제부터 아팠나요?</label><input type="text" name="head_1" placeholder="예: 2교시"></div>
                 <div class="sub-q"><label>머리가 아파서 약을 먹고 왔나요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="head_2" value="네"> 네</label><label><input type="radio" name="head_2" value="아니오"> 아니오</label></div>
+                    <div class="radio-inline"><label><input type="radio" name="head_2" value="네">네</label><label><input type="radio" name="head_2" value="아니오">아니오</label></div>
                 </div>
                 <div class="sub-q"><label>머리를 부딪히거나 다쳤나요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="head_3" value="네"> 네</label><label><input type="radio" name="head_3" value="아니오"> 아니오</label></div>
+                    <div class="radio-inline"><label><input type="radio" name="head_3" value="네">네</label><label><input type="radio" name="head_3" value="아니오">아니오</label></div>
                 </div>
                 <div class="sub-q"><label>열이 나거나 목이 뻣뻣한가요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="head_4" value="네"> 네</label><label><input type="radio" name="head_4" value="아니오"> 아니오</label></div>
+                    <div class="radio-inline"><label><input type="radio" name="head_4" value="네">네</label><label><input type="radio" name="head_4" value="아니오">아니오</label></div>
                 </div>
                 <div class="sub-q"><label>어제 잠을 충분히 잤나요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="head_5" value="네"> 네</label><label><input type="radio" name="head_5" value="아니오"> 아니오</label></div>
+                    <div class="radio-inline"><label><input type="radio" name="head_5" value="네">네</label><label><input type="radio" name="head_5" value="아니오">아니오</label></div>
                 </div>
                 <div class="sub-q"><label>토했거나 많이 어지러운가요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="head_6" value="네"> 네</label><label><input type="radio" name="head_6" value="아니오"> 아니오</label></div>
+                    <div class="radio-inline"><label><input type="radio" name="head_6" value="네">네</label><label><input type="radio" name="head_6" value="아니오">아니오</label></div>
                 </div>
-                <div class="sub-q"><label>통증 정도 (1약함 ~ 5심함)</label>
+                <div class="sub-q"><label>통증 정도 (1~5)</label>
                     <div class="radio-inline">
-                        <label><input type="radio" name="head_pain" value="1(약한 아픔)"> 1(약한 아픔)</label>
-                        <label><input type="radio" name="head_pain" value="2(불편한 아픔)"> 2(불편한 아픔)</label>
-                        <label><input type="radio" name="head_pain" value="3(많이 아픔)"> 3(많이 아픔)</label>
-                        <label><input type="radio" name="head_pain" value="4(심한 통증)"> 4(심한 통증)</label>
-                        <label><input type="radio" name="head_pain" value="5(극심한 통증)"> 5(극심한 통증)</label>
+                        <label><input type="radio" name="head_pain" value="1(약한 아픔)">1</label>
+                        <label><input type="radio" name="head_pain" value="2(불편한 아픔)">2</label>
+                        <label><input type="radio" name="head_pain" value="3(많이 아픔)">3</label>
+                        <label><input type="radio" name="head_pain" value="4(심한 통증)">4</label>
+                        <label><input type="radio" name="head_pain" value="5(극심한 통증)">5</label>
                     </div>
                 </div>
-            </div> <div id="detail-eye" class="detail-box">
+            </div>
+
+            <div id="detail-eye" class="detail-box">
                 <div class="sub-q"><label>언제부터 불편했나요?</label><input type="text" name="eye_1" placeholder="예: 오늘 아침부터"></div>
                 <div class="sub-q"><label>어느쪽 눈이 불편한가요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="eye_2" value="왼쪽">왼쪽</label><label><input type="radio" name="eye_2" value="오른쪽">오른쪽</label><label><input type="radio" name="eye_2" value="양쪽눈"> 양쪽</label></div>
+                    <div class="radio-inline"><label><input type="radio" name="eye_2" value="왼쪽">왼쪽</label><label><input type="radio" name="eye_2" value="오른쪽">오른쪽</label><label><input type="radio" name="eye_2" value="양쪽눈">양쪽</label></div>
                 </div>
                 <div class="sub-q"><label>눈을 부딪히거나 다쳤나요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="eye_3" value="네"> 네</label><label><input type="radio" name="eye_3" value="아니오"> 아니오</label></div>
+                    <div class="radio-inline"><label><input type="radio" name="eye_3" value="네">네</label><label><input type="radio" name="eye_3" value="아니오">아니오</label></div>
                 </div>
                 <div class="sub-q"><label>눈곱이 많이 끼나요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="eye_4" value="네"> 네</label><label><input type="radio" name="eye_4" value="아니오"> 아니오</label></div>
+                    <div class="radio-inline"><label><input type="radio" name="eye_4" value="네">네</label><label><input type="radio" name="eye_4" value="아니오">아니오</label></div>
                 </div>
                 <div class="sub-q"><label>눈이 따갑거나 가려운가요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="eye_5" value="네"> 네</label><label><input type="radio" name="eye_5" value="아니오"> 아니오</label></div>
+                    <div class="radio-inline"><label><input type="radio" name="eye_5" value="네">네</label><label><input type="radio" name="eye_5" value="아니오">아니오</label></div>
                 </div>
                 <div class="sub-q"><label>이물질이 들어갔나요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="eye_6" value="네"> 네</label><label><input type="radio" name="eye_6" value="아니오"> 아니오</label></div>
+                    <div class="radio-inline"><label><input type="radio" name="eye_6" value="네">네</label><label><input type="radio" name="eye_6" value="아니오">아니오</label></div>
                 </div>
             </div>
 
             <div id="detail-breathing" class="detail-box">
-                <div class="sub-q"><label>언제부터 힘들었나요?</label><input type="text" name="breath_1" placeholder="예: 방금, 1교시"></div>
-                <div class="sub-q"><label>집에서 약을 복용하거나 흡입기 등을 사용했나요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="breath_2" value="네"> 네</label><label><input type="radio" name="breath_2" value="아니오"> 아니오</label></div>
+                <div class="sub-q"><label>언제부터 힘들었나요?</label><input type="text" name="breath_1" placeholder="예: 방금"></div>
+                <div class="sub-q"><label>집에서 약이나 흡입기를 사용했나요?</label>
+                    <div class="radio-inline"><label><input type="radio" name="breath_2" value="네">네</label><label><input type="radio" name="breath_2" value="아니오">아니오</label></div>
                 </div>
-                <div class="sub-q"><label>숨이차서 말하기 힘들 정도인가요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="breath_3" value="네"> 네</label><label><input type="radio" name="breath_3" value="아니오"> 아니오</label></div>
+                <div class="sub-q"><label>숨이 차서 말하기 힘든가요?</label>
+                    <div class="radio-inline"><label><input type="radio" name="breath_3" value="네">네</label><label><input type="radio" name="breath_3" value="아니오">아니오</label></div>
                 </div>
-                <div class="sub-q"><label>천식을 진단받았나요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="breath_4" value="네"> 네</label><label><input type="radio" name="breath_4" value="아니오"> 아니오</label></div>
+                <div class="sub-q"><label>천식 진단을 받았나요?</label>
+                    <div class="radio-inline"><label><input type="radio" name="breath_4" value="네">네</label><label><input type="radio" name="breath_4" value="아니오">아니오</label></div>
                 </div>
-                <div class="sub-q"><label>전에도 비슷한 증상으로 병원치료를 받았나요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="breath_5" value="비슷한 증상이 있었으나 병원치료 없음">비슷한 증상이 있었으나 병원치료 없음</label><label><input type="radio" name="breath_5" value="비슷한 증상으로 병원치료 받았음"> 비슷한 증상으로 병원치료 받았음</label><label><input type="radio" name="breath_5" value="아니오"> 아니오</label></div>
+                <div class="sub-q"><label>비슷한 증상으로 병원 치료를 받은 적이 있나요?</label>
+                    <div class="radio-inline"><label><input type="radio" name="breath_5" value="비슷한 증상이 있었으나 병원치료 없음">없음</label><label><input type="radio" name="breath_5" value="비슷한 증상으로 병원치료 받았음">받았음</label><label><input type="radio" name="breath_5" value="아니오">아니오</label></div>
                 </div>
             </div>
 
             <div id="detail-etc" class="detail-box">
-                <div class="sub-q"><label>언제부터 불편했나요?</label><input type="text" name="etc_1" placeholder="예: 어제, 2교시"></div>
+                <div class="sub-q"><label>언제부터 불편했나요?</label><input type="text" name="etc_1" placeholder="예: 어제"></div>
                 <div class="sub-q"><label>어디가 아픈가요?</label><input type="text" name="etc_2" placeholder="귀, 목, 치아 등"></div>
                 <div class="sub-q"><label>다쳐서 아픈가요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="etc_3" value="네"> 네</label><label><input type="radio" name="etc_3" value="아니오"> 아니오</label></div>
+                    <div class="radio-inline"><label><input type="radio" name="etc_3" value="네">네</label><label><input type="radio" name="etc_3" value="아니오">아니오</label></div>
                 </div>
-                <div class="sub-q"><label>얼굴,팔다리,몸에 빨간 반점이 있나요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="etc_4" value="네"> 네</label><label><input type="radio" name="etc_4" value="아니오"> 아니오</label></div>
+                <div class="sub-q"><label>얼굴·팔다리·몸에 빨간 반점이 있나요?</label>
+                    <div class="radio-inline"><label><input type="radio" name="etc_4" value="네">네</label><label><input type="radio" name="etc_4" value="아니오">아니오</label></div>
                 </div>
-                <div class="sub-q"><label>치아가 흔들리거나 입술 또는 입안에서 피가 나나요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="etc_5" value="네"> 네</label><label><input type="radio" name="etc_5" value="아니오"> 아니오</label></div>
+                <div class="sub-q"><label>치아가 흔들리거나 입술/입안에서 피가 나나요?</label>
+                    <div class="radio-inline"><label><input type="radio" name="etc_5" value="네">네</label><label><input type="radio" name="etc_5" value="아니오">아니오</label></div>
                 </div>
             </div>
 
             <button type="submit" id="submitBtn">제 출 하 기</button>
         </form>
     </div>
-  <script>
-        const supabase = supabase.createClient('URL', 'KEY');
 
-        // 수정 코드 (안전!)
-        // process.env는 Vercel이 나중에 넣어줄 값입니다.
-        const supabase = supabase.createClient(
-        process.env.SUPABASE_URL, 
-        process.env.SUPABASE_KEY
-        );
-
+    <script>
         function showDetail(part) {
             document.querySelectorAll('.detail-box').forEach(box => box.style.display = 'none');
-            const targetBox = document.getElementById(`detail-${part}`);
-            if (targetBox) targetBox.style.display = 'block';
+            const target = document.getElementById('detail-' + part);
+            if (target) target.style.display = 'block';
         }
 
-        document.getElementById('healthForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            const submitBtn = document.getElementById('submitBtn');
-            const checkedSymptom = document.querySelector('input[name="body_part"]:checked');
-            
-            if (!checkedSymptom) return alert("아픈 부위를 선택해 주세요!");
-
-            submitBtn.disabled = true;
-            submitBtn.innerText = "전송 중...";
-
-            const grade = document.getElementById('grade').value;
-            const class_name = document.getElementById('class_name').value;
-            const student_name = document.getElementById('student_name').value;
-            const symptom = checkedSymptom.value;
-
-            let answersObj = {};
-            
-            let partMap = {
-                "다쳤어요": "injury",
-                "복통": "stomach",
-                "머리(두통)": "head", 
-                "눈": "eye",
-                "숨쉬기": "breathing",
-                "기타": "etc"
+        document.addEventListener('DOMContentLoaded', function() {
+            const partMap = {
+                "다쳤어요": "injury", "복통": "stomach", "머리(두통)": "head",
+                "눈": "eye", "숨쉬기": "breathing", "기타": "etc"
             };
-            
-            const activeBox = document.getElementById(`detail-${partMap[symptom]}`);
-            
-            if (activeBox) {
-                const inputs = activeBox.querySelectorAll('input, select');
-                inputs.forEach(input => {
-                    const subQContainer = input.closest('.sub-q');
-                    if (!subQContainer) return;
-                    const labelEl = subQContainer.querySelector('label');
-                    if (!labelEl) return;
-                    
-                    let questionLabel = labelEl.innerText.replace(':', '').trim();
 
-                    if (input.type === 'radio') {
-                        if (input.checked) answersObj[questionLabel] = input.value;
-                    } else if (input.tagName === 'SELECT') {
-                        if (input.value) answersObj[questionLabel] = input.value;
-                    } else {
-                        if (input.value.trim() !== '') answersObj[questionLabel] = input.value.trim();
-                    }
+            document.querySelectorAll('input[name="body_part"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const key = partMap[this.value];
+                    if (key) showDetail(key);
                 });
-            }
+            });
 
-            const allergyRadio = document.querySelector('input[name="allergy_type"]:checked');
-            const allergyDetail = document.getElementById('allergy_detail').value.trim();
+            // 🚀 선생님 PC의 Flask 서버로 데이터를 쏴주는 핵심 전송 장치
+            document.getElementById('healthForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const submitBtn = document.getElementById('submitBtn');
+                const checkedPart = document.querySelector('input[name="body_part"]:checked');
+                if (!checkedPart) { alert("아픈 부위를 선택해 주세요!"); return; }
 
-            let allergyValue = "없음";
-            if (allergyRadio && allergyRadio.value === "있음" && allergyDetail !== "") {
-                allergyValue = allergyDetail;
-            }
+                submitBtn.disabled = true;
+                submitBtn.innerText = "전송 중...";
 
-            const surveyData = {
-                type: 'elementary',
-                grade: grade,
-                class_name: class_name,
-                student_name: student_name,
-                symptom: symptom, 
-                details: {
-                    allergy: allergyValue
-                },
-                answers: answersObj 
-            };
-            try {
-        const { data, error } = await supabase
-            .from('health_records')
-            .insert([{
-                school_name: localStorage.getItem("mySchool"),
-                student_name: surveyData.student_name,
-                grade: surveyData.grade,
-                class_name: surveyData.class_name,
-                symptom: surveyData.symptom,
-                answers: surveyData.answers, // JSON 객체 그대로 넣으셔도 됩니다
-                details: surveyData.details
-            }]);
+                const grade = document.getElementById('grade').value;
+                const className = document.getElementById('class_name').value;
+                const studentName = document.getElementById('student_name').value;
+                const allergyType = document.querySelector('input[name="allergy_type"]:checked').value;
+                const allergyDetail = document.getElementById('allergy_detail').value.trim();
 
-        if (error) throw error;
-        
-        alert("건강문진 데이터가 성공적으로 제출되었습니다. 감사합니다.");
-        document.getElementById('healthForm').reset();
-        document.querySelectorAll('.detail-box').forEach(box => box.style.display = 'none');
-        
-    } catch (error) {
-        alert(`저장 오류: ${error.message}`);
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerText = "제 출 하 기";
-    }
-});  
-          
+                const answers_dict = {
+                    "알러지": allergyType === "있음" ? allergyDetail : "없음"
+                };
+                const details_dict = {};
+
+                const activeKey = partMap[checkedPart.value];
+                const activeBox = document.getElementById('detail-' + activeKey);
+                
+                if (activeBox) {
+                    activeBox.querySelectorAll('input').forEach(input => {
+                        if (input.type === 'radio' && !input.checked) return;
+                        if (!input.value.trim()) return;
+
+                        const subQ = input.closest('.sub-q');
+                        const qLabel = subQ ? subQ.querySelector('label').innerText.trim() : input.name;
+                        details_dict[qLabel] = input.value.trim();
+                    });
+                }
+
+                const payload = {
+                    "grade": grade,
+                    "class_name": className,
+                    "student_name": studentName,
+                    "symptom": checkedPart.value,
+                    "type": "elementary", 
+                    "answers": answers_dict,
+                    "details": details_dict
+                };
+
+                try {
+                    // /api/submit_survey로 데이터를 보내면, Flask가 받아서 config에 기재된 학교명을 주입한 뒤 Supabase에 넣습니다.
+                    const response = await fetch('/api/submit_survey', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert("문진이 성공적으로 제출되었습니다. 보건실로 이동하세요!");
+                        document.getElementById('healthForm').reset();
+                        document.querySelectorAll('.detail-box').forEach(box => box.style.display = 'none');
+                    } else {
+                        alert("제출 실패: " + result.message);
+                    }
+                } catch (error) {
+                    console.error("전송 에러:", error);
+                    alert("서ver 연결에 실패했습니다. 보건 선생님께 직접 말씀드리세요.");
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "제 출 하 기";
+                }
+            });
+        });
     </script>
 </body>
-</html>    
+</html>
