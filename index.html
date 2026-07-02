@@ -310,7 +310,7 @@
 
                 try {
                     const { data: result, error } = await supabaseClient
-                        .from('health_records')
+                        .from('health_survey')
                         .insert([data]);
 
                     if (error) throw error;
