@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>학생 건강 상태 문진 (초등)</title>
+    <title>학생 건강 상태 문진 (초등) - Supabase 연동</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: 'Malgun Gothic', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; display: flex; justify-content: center; }
         .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 520px; }
@@ -14,7 +15,7 @@
         input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 15px; }
         .part-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
         .part-label { cursor: pointer; }
-        .part-box { border: 2px solid #e0e0e0; border-radius: 8px; padding: 12px 5px; text-align: center; background-color: #fafafa; font-weight: bold; font-size: 15px; transition: all 0.2s; }
+        .part-box { border: 2px solid #e0e0e0; border-radius: 8px; padding: 12px 5px; text-align: center; background-color: #fafafa; font-weight: bold; font-size: 15px; transition: all 0.2s; user-select: none; }
         .part-label:hover .part-box { background-color: #f0f0f0; }
         .part-container input[type="radio"] { display: none; }
         .part-container input[type="radio"]:checked + .part-box { border-color: #e74c3c; background-color: #fdedec; color: #e74c3c; }
@@ -27,11 +28,13 @@
         button { width: 100%; padding: 14px; background-color: #27be66; color: white; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; }
         button:hover { background-color: #27ae60; }
         button:disabled { background-color: #95a5a6; cursor: not-allowed; }
+        .supabase-info { background: #e8f5e9; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; border-left: 4px solid #27ae60; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>🏥 학생 건강상태 문진 (초등)</h2>
+     <div class="container">
+        <h2>🏥 학생 건강상태 문진 (초등) </h2>
+            
         <form id="healthForm">
             <div class="row-group">
                 <div class="form-group">
@@ -69,15 +72,40 @@
             <div class="form-group">
                 <label>어디가 아픈가요?</label>
                 <div class="part-container">
-                    <label class="part-label"><input type="radio" name="body_part" value="다쳤어요" required><div class="part-box">🩹 다쳤어요</div></label>
-                    <label class="part-label"><input type="radio" name="body_part" value="복통"><div class="part-box">🤢 배</div></label>
-                    <label class="part-label"><input type="radio" name="body_part" value="머리(두통)"><div class="part-box">🤕 머리</div></label>
-                    <label class="part-label"><input type="radio" name="body_part" value="눈"><div class="part-box">👀 눈</div></label>
-                    <label class="part-label"><input type="radio" name="body_part" value="숨쉬기"><div class="part-box">🫁 숨쉬기</div></label>
-                    <label class="part-label"><input type="radio" name="body_part" value="기타"><div class="part-box">✨ 기타</div></label>
+                    <!-- 다쳤어요 -->
+                    <label class="part-label">
+                        <input type="radio" name="body_part" value="다쳤어요" required>
+                        <div class="part-box">🩹 다쳤어요</div>
+                    </label>
+                    <!-- 배 / 복통 -->
+                    <label class="part-label">
+                        <input type="radio" name="body_part" value="복통">
+                        <div class="part-box">🤢 배</div>
+                    </label>
+                    <!-- 머리 / 두통 -->
+                    <label class="part-label">
+                        <input type="radio" name="body_part" value="머리(두통)">
+                        <div class="part-box">🤕 머리</div>
+                    </label>
+                    <!-- 눈 -->
+                    <label class="part-label">
+                        <input type="radio" name="body_part" value="눈">
+                        <div class="part-box">👀 눈</div>
+                    </label>
+                    <!-- 숨쉬기 -->
+                    <label class="part-label">
+                        <input type="radio" name="body_part" value="숨쉬기">
+                        <div class="part-box">🫁 숨쉬기</div>
+                    </label>
+                    <!-- 기타 -->
+                    <label class="part-label">
+                        <input type="radio" name="body_part" value="기타">
+                        <div class="part-box">✨ 기타</div>
+                    </label>
                 </div>
             </div>
 
+            <!-- 상세 질문 영역들 -->
             <div id="detail-injury" class="detail-box">
                 <div class="sub-q"><label>언제 다쳤나요?</label><input type="text" name="injury_1" placeholder="예: 1교시 쉬는 시간"></div>
                 <div class="sub-q"><label>어떻게 다쳤나요?</label><input type="text" name="injury_2" placeholder="예: 뛰어가다 넘어짐"></div>
@@ -100,11 +128,11 @@
             </div>
 
             <div id="detail-stomach" class="detail-box">
-                <div class="sub-q"><label>언제부터 아팠나요?</label><input type="text" name="stomach_1" placeholder="예: 집에서"></div>
+                <div class="sub-q"><label>언제부터 아팠나요?</label><input type="text" name="stomach_1" placeholder="예: 집에서 / 2교시"></div>
                 <div class="sub-q"><label>배가 아파서 약을 먹고 왔나요?</label>
                     <div class="radio-inline"><label><input type="radio" name="stomach_2" value="네">네</label><label><input type="radio" name="stomach_2" value="아니오">아니오</label></div>
                 </div>
-                <div class="sub-q"><label>어디가 가장 아픈가요?</label><input type="text" name="stomach_3" placeholder="예: 배 오른쪽"></div>
+                <div class="sub-q"><label>어디가 가장 아픈가요?</label><input type="text" name="stomach_3" placeholder="예: 배 오른쪽 / 배꼽 주변"></div>
                 <div class="sub-q"><label>토하거나 설사했나요?</label>
                     <div class="radio-inline"><label><input type="radio" name="stomach_4" value="토했음">토함</label><label><input type="radio" name="stomach_4" value="설사했음">설사</label><label><input type="radio" name="stomach_4" value="안했음">안함</label></div>
                 </div>
@@ -114,7 +142,7 @@
                 <div class="sub-q"><label>어제 많이 먹었거나 맵거나 기름진 음식을 먹었나요?</label>
                     <div class="radio-inline"><label><input type="radio" name="stomach_6" value="네">네</label><label><input type="radio" name="stomach_6" value="아니오">아니오</label></div>
                 </div>
-                <div class="sub-q"><label>생리로 인한 통증인가요?</label>
+                <div class="sub-q"><label>생리로 인한 통증인가요? (여학생)</label>
                     <div class="radio-inline"><label><input type="radio" name="stomach_7" value="네">네</label><label><input type="radio" name="stomach_7" value="아니오">아니오</label></div>
                 </div>
                 <div class="sub-q"><label>통증 정도 (1~5)</label>
@@ -129,7 +157,7 @@
             </div>
 
             <div id="detail-head" class="detail-box">
-                <div class="sub-q"><label>언제부터 아팠나요?</label><input type="text" name="head_1" placeholder="예: 2교시"></div>
+                <div class="sub-q"><label>언제부터 아팠나요?</label><input type="text" name="head_1" placeholder="예: 2교시 / 아침부터"></div>
                 <div class="sub-q"><label>머리가 아파서 약을 먹고 왔나요?</label>
                     <div class="radio-inline"><label><input type="radio" name="head_2" value="네">네</label><label><input type="radio" name="head_2" value="아니오">아니오</label></div>
                 </div>
@@ -210,6 +238,19 @@
     </div>
 
     <script>
+        const SUPABASE_URL = "https://rcipjoyysyajwwxgiijj.supabase.co"
+        const SUPABASE_ANON_KEY = "sb_publishable_h9-xbTH8KPvyCwPVXZQNGA_SxI-8gHV"
+
+
+        let supabaseClient = null;
+        if (SUPABASE_URL.includes('YOUR-PROJECT')) {
+            console.warn('%c[경고] Supabase URL과 Key를 실제 값으로 변경하세요!', 'color:red; font-size:13px');
+        } else {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('%c[Supabase] 클라이언트 초기화 완료', 'color:#27ae60');
+        }
+
+        // 상세 질문 표시 함수
         function showDetail(part) {
             document.querySelectorAll('.detail-box').forEach(box => box.style.display = 'none');
             const target = document.getElementById('detail-' + part);
@@ -217,56 +258,76 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            const partMap = {
-                "다쳤어요": "injury", "복통": "stomach", "머리(두통)": "head",
-                "눈": "eye", "숨쉬기": "breathing", "기타": "etc"
-            };
-
+            // body_part 라디오 이벤트 연결 (이전과 동일)
+            const partMap = { "다쳤어요": "injury", "복통": "stomach", "머리(두통)": "head", "눈": "eye", "숨쉬기": "breathing", "기타": "etc" };
             document.querySelectorAll('input[name="body_part"]').forEach(radio => {
                 radio.addEventListener('change', function() {
                     const key = partMap[this.value];
                     if (key) showDetail(key);
                 });
             });
-// [주의] DOMContentLoaded 이벤트 리스너 최상단에 추가하세요
-const urlParams = new URLSearchParams(window.location.search);
-const schoolName = urlParams.get('school') || "미지정";
 
-document.getElementById('healthForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.innerText = "전송 중...";
+            // ==================== Supabase 제출 ====================
+            const form = document.getElementById('healthForm');
+            const submitBtn = document.getElementById('submitBtn');
 
-    // 1. 폼 데이터 수집
-    const formData = {
-        school_name: schoolName,
-        grade: document.getElementById('grade')?.value || "0",
-        class_name: document.getElementById('class_name')?.value || "0",
-        student_name: document.getElementById('student_name')?.value || "익명",
-        // 증상과 상세 정보 수집 (기존 로직 유지)
-        symptom: document.querySelector('input[name="main_symptom"]:checked')?.value || "기타",
-        details: { /* 상세 내용 수집 로직 */ }
-    };
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
 
-    // 2. Supabase로 직접 전송
-    try {
-        const { data, error } = await supabaseClient
-            .from('health_records') // Flask 코드에 적힌 테이블명과 일치시켜야 함
-            .insert([formData]);
+                if (!supabase) {
+                    alert('Supabase가 초기화되지 않았습니다. URL과 Key를 확인하세요.');
+                    return;
+                }
 
-        if (error) throw error;
+                submitBtn.disabled = true;
+                submitBtn.innerText = "Supabase에 저장 중...";
 
-        alert("데이터가 성공적으로 전송되었습니다.");
-        document.getElementById('healthForm').reset();
-    } catch (err) {
-        console.error("전송 에러:", err);
-        alert("전송 실패: " + err.message);
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerText = "제 출 하 기";
-    }
-});
+                // 데이터 수집
+                const selectedPart = document.querySelector('input[name="body_part"]:checked')?.value;
+
+                const data = {
+                    form_type: 'elementary',
+                    school_name: '미지정',
+                    grade: document.getElementById('grade').value,
+                    class_name: document.getElementById('class_name').value,
+                    student_name: document.getElementById('student_name').value,
+                    body_part: selectedPart,
+                    allergy_type: document.querySelector('input[name="allergy_type"]:checked')?.value,
+                    allergy_detail: document.getElementById('allergy_detail').value || null,
+                    details: {
+                        injury: selectedPart === '다쳤어요' ? {
+                            when: document.querySelector('input[name="injury_1"]')?.value,
+                            how: document.querySelector('input[name="injury_2"]')?.value,
+                            where: document.querySelector('input[name="injury_3"]')?.value,
+                            movable: document.querySelector('input[name="injury_4"]:checked')?.value,
+                            bleeding: document.querySelector('input[name="injury_5"]:checked')?.value,
+                            pain_level: document.querySelector('input[name="injury_pain"]:checked')?.value
+                        } : null,
+                        // 다른 상세 질문도 필요에 따라 추가 수집
+                    },
+                    created_at: new Date().toISOString()
+                };
+
+                try {
+                    const { data: result, error } = await supabaseClient
+                        .from('health_records')
+                        .insert([data]);
+
+                    if (error) throw error;
+
+                    alert('✅ Supabase에 성공적으로 저장되었습니다!');
+                    form.reset();
+                    document.querySelectorAll('.detail-box').forEach(box => box.style.display = 'none');
+
+                } catch (err) {
+                    console.error('Supabase 저장 에러:', err);
+                    alert('저장 실패: ' + (err.message || err));
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "제 출 하 기 (Supabase 저장)";
+                }
+            });
+        });
     </script>
 </body>
 </html>
