@@ -290,7 +290,7 @@
             };
 
             try {
-                const { data, error } = await supabaseClient.from('health_records').insert([formData]);
+                const { data, error } = await supabaseClient.from('health_survey').insert([formData]);
                 if (error) throw error;
                 alert('✅ Supabase에 저장되었습니다!');
                 form.reset();
