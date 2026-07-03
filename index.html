@@ -265,10 +265,11 @@
             // 2️⃣ URL 파라미터(학교명) 연동 기능
             try {
                 const urlParams = new URLSearchParams(window.location.search);
-                const schoolParam = urlParams.get('school');
+                const schoolParam = urlParams.get('school_name') || urlParams.get('school') || '미지정';
+
                 const schoolInput = document.getElementById('school_name');
                 if (schoolInput) {
-                    schoolInput.value = schoolParam ? schoolParam : '미지정';
+                    schoolInput.value = schoolParam;
                 }
             } catch(e) {
                 console.warn("URL 파라미터 처리 중 예외 발생 (UI 동작에는 영향 없음)");
@@ -306,17 +307,16 @@
                 submitBtn.innerText = "Supabase에 저장 중...";
 
                 const selectedPart = document.querySelector('input[name="body_part"]:checked')?.value;
-
                 const data = {
-                    form_type: 'elementary',
-                    school_name: document.getElementById('school_name').value || '미지정',
+                    survey_type: 'elementary',           // ← 추가
+                    school_name: schoolParam,
                     grade: document.getElementById('grade').value,
                     class_name: document.getElementById('class_name').value,
                     student_name: document.getElementById('student_name').value,
-                    body_part: selectedPart,
-                    allergy_type: document.querySelector('input[name="allergy_type"]:checked')?.value,
-                    allergy_detail: document.getElementById('allergy_detail').value || null,
-                    details: {
+                    main_symptom: selectedPart,          // ← body_part를 main_symptom으로
+                    allergy_detail: document.getElementById('allergy_detail').value || '없음',
+                    meds_today: '없음',                  // 필요시 입력 필드 추가 가능
+                    details: {                
                         injury: selectedPart === '다쳤어요' ? {
                             when: document.querySelector('input[name="injury_1"]')?.value,
                             how: document.querySelector('input[name="injury_2"]')?.value,
