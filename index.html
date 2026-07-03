@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>학생 건강 상태 문진 (초등) - Supabase 연동</title>
+    <!-- 학교 망에서 아래 스크립트가 차단되더라도 화면은 정상 동작하도록 코드를 수정했습니다. -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: 'Malgun Gothic', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; display: flex; justify-content: center; }
@@ -28,18 +29,15 @@
         button { width: 100%; padding: 14px; background-color: #27be66; color: white; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; }
         button:hover { background-color: #27ae60; }
         button:disabled { background-color: #95a5a6; cursor: not-allowed; }
-        .supabase-info { background: #e8f5e9; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; border-left: 4px solid #27ae60; }
     </style>
 </head>
 <body>
-     <div class="container">
+    <div class="container">
         <h2>🏥 학생 건강상태 문진 (초등) </h2>
             
         <form id="healthForm">
-            <div class="form-group">
-                <label for="school_name">🏫 학교명</label>
-                <input type="text" id="school_name" name="school_name" readonly style="background-color: #f1f5f9; color: #475569; font-weight: bold;">
-            </div>
+            <!-- 에러 방지용 hidden input -->
+            <input type="hidden" id="school_name" value="">
 
             <div class="row-group">
                 <div class="form-group">
@@ -104,6 +102,7 @@
                 </div>
             </div>
 
+            <!-- 상세 질문 영역들 -->
             <div id="detail-injury" class="detail-box">
                 <div class="sub-q"><label>언제 다쳤나요?</label><input type="text" name="injury_1" placeholder="예: 1교시 쉬는 시간"></div>
                 <div class="sub-q"><label>어떻게 다쳤나요?</label><input type="text" name="injury_2" placeholder="예: 뛰어가다 넘어짐"></div>
@@ -116,10 +115,8 @@
                 </div>
                 <div class="sub-q"><label>통증 정도 (1약함 ~ 5심함)</label>
                     <div class="radio-inline">
-                        <label><input type="radio" name="injury_pain" value="1(약한 아픔)">1</label>
-                        <label><input type="radio" name="injury_pain" value="2(불편한 아픔)">2</label>
-                        <label><input type="radio" name="injury_pain" value="3(많이 아픔)">3</label>
-                        <label><input type="radio" name="injury_pain" value="4(심한 통증)">4</label>
+                        <label><input type="radio" name="injury_pain" value="1(약한 아픔)">1</label><label><input type="radio" name="injury_pain" value="2(불편한 아픔)">2</label>
+                        <label><input type="radio" name="injury_pain" value="3(많이 아픔)">3</label><label><input type="radio" name="injury_pain" value="4(심한 통증)">4</label>
                         <label><input type="radio" name="injury_pain" value="5(극심한 통증)">5</label>
                     </div>
                 </div>
@@ -145,10 +142,8 @@
                 </div>
                 <div class="sub-q"><label>통증 정도 (1~5)</label>
                     <div class="radio-inline">
-                        <label><input type="radio" name="stomach_pain" value="1(약한 아픔)">1</label>
-                        <label><input type="radio" name="stomach_pain" value="2(불편한 아픔)">2</label>
-                        <label><input type="radio" name="stomach_pain" value="3(많이 아픔)">3</label>
-                        <label><input type="radio" name="stomach_pain" value="4(심한 통증)">4</label>
+                        <label><input type="radio" name="stomach_pain" value="1(약한 아픔)">1</label><label><input type="radio" name="stomach_pain" value="2(불편한 아픔)">2</label>
+                        <label><input type="radio" name="stomach_pain" value="3(많이 아픔)">3</label><label><input type="radio" name="stomach_pain" value="4(심한 통증)">4</label>
                         <label><input type="radio" name="stomach_pain" value="5(극심한 통증)">5</label>
                     </div>
                 </div>
@@ -173,10 +168,8 @@
                 </div>
                 <div class="sub-q"><label>통증 정도 (1~5)</label>
                     <div class="radio-inline">
-                        <label><input type="radio" name="head_pain" value="1(약한 아픔)">1</label>
-                        <label><input type="radio" name="head_pain" value="2(불편한 아픔)">2</label>
-                        <label><input type="radio" name="head_pain" value="3(많이 아픔)">3</label>
-                        <label><input type="radio" name="head_pain" value="4(심한 통증)">4</label>
+                        <label><input type="radio" name="head_pain" value="1(약한 아픔)">1</label><label><input type="radio" name="head_pain" value="2(불편한 아픔)">2</label>
+                        <label><input type="radio" name="head_pain" value="3(많이 아픔)">3</label><label><input type="radio" name="head_pain" value="4(심한 통증)">4</label>
                         <label><input type="radio" name="head_pain" value="5(극심한 통증)">5</label>
                     </div>
                 </div>
@@ -213,7 +206,7 @@
                     <div class="radio-inline"><label><input type="radio" name="breath_4" value="네">네</label><label><input type="radio" name="breath_4" value="아니오">아니오</label></div>
                 </div>
                 <div class="sub-q"><label>비슷한 증상으로 병원 치료를 받은 적이 있나요?</label>
-                    <div class="radio-inline"><label><input type="radio" name="breath_5" value="비슷한 증상이 있었으나 병원치료 없음">없음</label><label><input type="radio" name="breath_5" value="비슷한 증상으로 병원치료 받았음">받았음</label><label><input type="radio" name="breath_5" value="아니오">아니오</label></div>
+                    <div class="radio-inline"><label><input type="radio" name="breath_5" value="네">네</label><label><input type="radio" name="breath_5" value="병원치료 받지않음">병원치료 받지않음</label><label><input type="radio" name="breath_5" value="처음있는 증상임">처음있는 증상임</label></div>
                 </div>
             </div>
 
@@ -234,57 +227,89 @@
             <button type="submit" id="submitBtn">제 출 하 기</button>
         </form>
     </div>
+
     <script>
-        const SUPABASE_URL = "https://rcipjoyysyajwwxgiijj.supabase.co"
-        const SUPABASE_ANON_KEY = "sb_publishable_h9-xbTH8KPvyCwPVXZQNGA_SxI-8gHV"
-
-
-        let supabaseClient = null;
-        if (SUPABASE_URL.includes('YOUR-PROJECT')) {
-            console.warn('%c[경고] Supabase URL과 Key를 실제 값으로 변경하세요!', 'color:red; font-size:13px');
-        } else {
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            console.log('%c[Supabase] 클라이언트 초기화 완료', 'color:#27ae60');
-        }
-
-        // 상세 질문 표시 함수
-        function showDetail(part) {
-            document.querySelectorAll('.detail-box').forEach(box => box.style.display = 'none');
-            const target = document.getElementById('detail-' + part);
-            if (target) target.style.display = 'block';
-        }
-
+        // DOMContentLoaded 이벤트를 통해 HTML 구조가 모두 렌더링된 후 가장 먼저 UI 기능부터 세팅합니다.
         document.addEventListener('DOMContentLoaded', function() {
-            // body_part 라디오 이벤트 연결 (이전과 동일)
-            const partMap = { "다쳤어요": "injury", "복통": "stomach", "머리(두통)": "head", "눈": "eye", "숨쉬기": "breathing", "기타": "etc" };
-            document.querySelectorAll('input[name="body_part"]').forEach(radio => {
+            
+            // 1️⃣ [핵심 수정] UI 이벤트 연동 (에러에 방해받지 않도록 최상단에 배치)
+            const partMap = { 
+                "다쳤어요": "injury", 
+                "복통": "stomach", 
+                "머리(두통)": "head", 
+                "눈": "eye", 
+                "숨쉬기": "breathing", 
+                "기타": "etc" 
+            };
+            
+            const radios = document.querySelectorAll('input[name="body_part"]');
+            
+            radios.forEach(radio => {
                 radio.addEventListener('change', function() {
+                    // 모든 디테일 박스를 먼저 숨깁니다.
+                    document.querySelectorAll('.detail-box').forEach(box => {
+                        box.style.display = 'none';
+                    });
+                    
+                    // 선택된 항목의 박스만 찾아서 보여줍니다.
                     const key = partMap[this.value];
-                    if (key) showDetail(key);
+                    if (key) {
+                        const targetBox = document.getElementById('detail-' + key);
+                        if (targetBox) {
+                            targetBox.style.display = 'block';
+                        }
+                    }
                 });
             });
 
-            // ==================== Supabase 제출 ====================
+            // 2️⃣ URL 파라미터(학교명) 연동 기능
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const schoolParam = urlParams.get('school');
+                const schoolInput = document.getElementById('school_name');
+                if (schoolInput) {
+                    schoolInput.value = schoolParam ? schoolParam : '미지정';
+                }
+            } catch(e) {
+                console.warn("URL 파라미터 처리 중 예외 발생 (UI 동작에는 영향 없음)");
+            }
+
+            // 3️⃣ Supabase 초기화 (오류 발생 시 전체 프로그램이 멈추지 않도록 try-catch로 격리)
+            let supabaseClient = null;
+            try {
+                const SUPABASE_URL = "https://rcipjoyysyajwwxgiijj.supabase.co";
+                const SUPABASE_ANON_KEY = "sb_publishable_h9-xbTH8KPvyCwPVXZQNGA_SxI-8gHV";
+                
+                // 학교 보안망 등에 의해 supabase 라이브러리를 아예 불러오지 못했을 때를 대비한 방어 코드
+                if (typeof supabase !== 'undefined') {
+                    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                } else {
+                    console.warn("네트워크 차단 등의 이유로 Supabase 스크립트를 로드하지 못했습니다.");
+                }
+            } catch(e) {
+                console.warn("Supabase 초기화 중 에러 발생:", e);
+            }
+
+            // 4️⃣ 폼 제출(Submit) 기능
             const form = document.getElementById('healthForm');
             const submitBtn = document.getElementById('submitBtn');
 
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
 
-                if (!supabase) {
-                    alert('Supabase가 초기화되지 않았습니다. URL과 Key를 확인하세요.');
+                if (!supabaseClient) {
+                    alert('데이터베이스(Supabase)에 연결할 수 없는 상태입니다. 인터넷 환경이나 보안 설정을 확인해 주세요.');
                     return;
                 }
 
                 submitBtn.disabled = true;
                 submitBtn.innerText = "Supabase에 저장 중...";
 
-                // 데이터 수집
                 const selectedPart = document.querySelector('input[name="body_part"]:checked')?.value;
 
                 const data = {
                     form_type: 'elementary',
-                    school_name: '미지정',
+                    school_name: document.getElementById('school_name').value || '미지정',
                     grade: document.getElementById('grade').value,
                     class_name: document.getElementById('class_name').value,
                     student_name: document.getElementById('student_name').value,
@@ -300,7 +325,47 @@
                             bleeding: document.querySelector('input[name="injury_5"]:checked')?.value,
                             pain_level: document.querySelector('input[name="injury_pain"]:checked')?.value
                         } : null,
-                        // 다른 상세 질문도 필요에 따라 추가 수집
+                        stomach: selectedPart === '복통' ? {
+                            when: document.querySelector('input[name="stomach_1"]')?.value,
+                            medicine: document.querySelector('input[name="stomach_2"]:checked')?.value,
+                            where: document.querySelector('input[name="stomach_3"]')?.value,
+                            vomit_diarrhea: document.querySelector('input[name="stomach_4"]:checked')?.value,
+                            nausea: document.querySelector('input[name="stomach_5"]:checked')?.value,
+                            overeat: document.querySelector('input[name="stomach_6"]:checked')?.value,
+                            menstruation: document.querySelector('input[name="stomach_7"]:checked')?.value,
+                            pain_level: document.querySelector('input[name="stomach_pain"]:checked')?.value
+                        } : null,
+                        head: selectedPart === '머리(두통)' ? {
+                            when: document.querySelector('input[name="head_1"]')?.value,
+                            medicine: document.querySelector('input[name="head_2"]:checked')?.value,
+                            hit: document.querySelector('input[name="head_3"]:checked')?.value,
+                            fever_stiff: document.querySelector('input[name="head_4"]:checked')?.value,
+                            sleep: document.querySelector('input[name="head_5"]:checked')?.value,
+                            vomit_dizzy: document.querySelector('input[name="head_6"]:checked')?.value,
+                            pain_level: document.querySelector('input[name="head_pain"]:checked')?.value
+                        } : null,
+                        eye: selectedPart === '눈' ? {
+                            when: document.querySelector('input[name="eye_1"]')?.value,
+                            which: document.querySelector('input[name="eye_2"]:checked')?.value,
+                            hit: document.querySelector('input[name="eye_3"]:checked')?.value,
+                            discharge: document.querySelector('input[name="eye_4"]:checked')?.value,
+                            itchy: document.querySelector('input[name="eye_5"]:checked')?.value,
+                            foreign: document.querySelector('input[name="eye_6"]:checked')?.value
+                        } : null,
+                        breathing: selectedPart === '숨쉬기' ? {
+                            when: document.querySelector('input[name="breath_1"]')?.value,
+                            inhaler: document.querySelector('input[name="breath_2"]:checked')?.value,
+                            shortness: document.querySelector('input[name="breath_3"]:checked')?.value,
+                            asthma: document.querySelector('input[name="breath_4"]:checked')?.value,
+                            hospital: document.querySelector('input[name="breath_5"]:checked')?.value
+                        } : null,
+                        etc: selectedPart === '기타' ? {
+                            when: document.querySelector('input[name="etc_1"]')?.value,
+                            where: document.querySelector('input[name="etc_2"]')?.value,
+                            injury: document.querySelector('input[name="etc_3"]:checked')?.value,
+                            rash: document.querySelector('input[name="etc_4"]:checked')?.value,
+                            bleeding_teeth: document.querySelector('input[name="etc_5"]:checked')?.value
+                        } : null
                     },
                     created_at: new Date().toISOString()
                 };
@@ -312,8 +377,17 @@
 
                     if (error) throw error;
 
-                    alert('✅ Supabase에 성공적으로 저장되었습니다!');
+                    alert('✅ 성공적으로 제출되었습니다!');
                     form.reset();
+                    
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const schoolParam = urlParams.get('school');
+                    if (schoolParam) {
+                        document.getElementById('school_name').value = schoolParam;
+                    } else {
+                        document.getElementById('school_name').value = '미지정';
+                    }
+                    
                     document.querySelectorAll('.detail-box').forEach(box => box.style.display = 'none');
 
                 } catch (err) {
@@ -321,7 +395,7 @@
                     alert('저장 실패: ' + (err.message || err));
                 } finally {
                     submitBtn.disabled = false;
-                    submitBtn.innerText = "제 출 하 기 (Supabase 저장)";
+                    submitBtn.innerText = "제 출 하 기";
                 }
             });
         });
