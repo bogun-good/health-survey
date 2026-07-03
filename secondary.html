@@ -160,6 +160,14 @@
 </div>
 
 <script>
+    let schoolParam = '미지정'; // 전역 변수로 선언
+
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    schoolParam = urlParams.get('school') || '미지정'; // 값 할당
+
+    // ... 나머지 코드
+});
     const SUPABASE_URL = "https://rcipjoyysyajwwxgiijj.supabase.co"
     const SUPABASE_ANON_KEY = "sb_publishable_h9-xbTH8KPvyCwPVXZQNGA_SxI-8gHV"
 
@@ -229,103 +237,117 @@
         </div>
         <div class="sub-q"><label>언제부터 시작되었나요?</label><input type="text" id="c_start" placeholder="예: 어제, 3교시"></div>
     `;
+function renderDetail(symptom) {
+    const detailSection = document.getElementById('detailSection');
+    if (!detailSection) return;
 
-    function renderDetail(type) {
-        const container = document.getElementById('detailSection');
-        container.style.display = 'block';
-        if (type === 'headache') container.innerHTML = headacheHTML;
-        else if (type === 'stomachache') container.innerHTML = stomachacheHTML;
-        else if (type === 'both') container.innerHTML = headacheHTML + '<hr>' + stomachacheHTML;
-        else if (type === 'cold') container.innerHTML = coldHTML;
+    // 🌟 핵심: 선택된 증상에 따라 HTML 내용을 직접 삽입합니다.
+    let htmlContent = '';
+    
+    if (symptom === 'headache' || symptom === 'both') {
+        htmlContent += headacheHTML; // 미리 정의한 변수 활용
     }
+    if (symptom === 'stomachache' || symptom === 'both') {
+        htmlContent += stomachacheHTML;
+    }
+    if (symptom === 'cold') {
+        htmlContent += coldHTML;
+    }
+    
+    detailSection.innerHTML = htmlContent; // 상세 내용을 화면에 출력
+    detailSection.style.display = 'block'; // 화면에 표시
+}
+// 2. DOMContentLoaded 내부 이벤트 연결 부분
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const schoolParam = urlParams.get('school') || '미지정';
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // 🌟 [수정 1] 주소창 파라미터에서 school 값을 가져와 스크립트 내부 변수에 보관 (화면 표시X)
-        const urlParams = new URLSearchParams(window.location.search);
-        const schoolParam = urlParams.get('school') || '미지정';
-
-        document.querySelectorAll('input[name="main_symptom"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                renderDetail(this.value);
-            });
-        });
-
-        const form = document.getElementById('healthForm');
-        const submitBtn = document.getElementById('submitBtn');
-
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            // 🌟 [보완] 원본 스크립트 내부 클라이언트 변수명 불일치(supabase -> supabaseClient) 오류 수정
-            if (!supabaseClient) {
-                alert('Supabase 설정을 먼저 해주세요.');
-                return;
-            }
-
-            submitBtn.disabled = true;
-            submitBtn.innerText = "Supabase 저장 중...";
-
-            const selectedSymptom = document.querySelector('input[name="main_symptom"]:checked')?.value;
-
-            // 상세 데이터 정의 (중복 선택 요소를 깔끔하게 가져오기 위함)
-            let detailData = { symptom_type: selectedSymptom };
-            if (selectedSymptom === 'headache' || selectedSymptom === 'both') {
-                detailData.headache = {
-                    pain_level: document.querySelector('input[name="h_pain"]:checked')?.value,
-                    sleep_time: document.getElementById('h_sleep_time')?.value,
-                    start_time: document.getElementById('h_start')?.value
-                };
-            }
-            if (selectedSymptom === 'stomachache' || selectedSymptom === 'both') {
-                const checkedTypes = Array.from(document.querySelectorAll('input[name="s_type"]:checked')).map(el => el.value);
-                detailData.stomachache = {
-                    pain_level: document.querySelector('input[name="s_pain"]:checked')?.value,
-                    start_time: document.getElementById('s_start')?.value,
-                    food: document.getElementById('s_food')?.value,
-                    types: checkedTypes
-                };
-            }
-            if (selectedSymptom === 'cold') {
-                const checkedCold = Array.from(document.querySelectorAll('input[name="cold_sym"]:checked')).map(el => el.value);
-                detailData.cold = {
-                    symptoms: checkedCold,
-                    start_time: document.getElementById('c_start')?.value
-                };
-            }
-
-            const formData = {
-                form_type: 'secondary',
-                // 🌟 [수정 2] '미지정' 고정값 대신 변수에 기억된 주소창 파라미터 값 대입
-                school_name: schoolParam, 
-                grade: document.getElementById('common_grade').value,
-                class_name: document.getElementById('common_class').value,
-                student_name: document.getElementById('common_name').value,
-                temperature: document.getElementById('common_temp').value,
-                main_symptom: selectedSymptom,
-                allergy: document.getElementById('common_allergy').value,
-                meds_today: document.getElementById('common_meds').value,
-                consent: document.querySelector('input[name="consent"]:checked')?.value,
-                details: detailData, 
-                created_at: new Date().toISOString()
-            };
-
-            try {
-                const { data, error } = await supabaseClient.from('health_survey').insert([formData]);
-                if (error) throw error;
-                
-                alert('✅ Supabase에 성공적으로 저장되었습니다!');
-                
-                // 🌟 [수정 3] form.reset()을 호출해도 schoolParam 변수는 유실되지 않으므로 추가 조치 불필요
-                form.reset();
-                document.getElementById('detailSection').style.display = 'none';
-            } catch (err) {
-                alert('저장 실패: ' + err.message);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerText = "제 출 하 기";
-            }
+    // 메인 증상 선택 시 상세 영역 표시
+    document.querySelectorAll('input[name="main_symptom"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            renderDetail(this.value); // 🌟 이 부분이 호출되어야 화면에 나타납니다.
         });
     });
+
+    // ... 나머지 form.addEventListener 등은 이전 단계에서 수정한 코드와 동일
+});
+    
+form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    if (!supabaseClient) {
+        alert('Supabase 설정을 먼저 해주세요.');
+        return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Supabase 저장 중...";
+
+    const selectedSymptom = document.querySelector('input[name="main_symptom"]:checked')?.value;
+    
+    // 1. 상세 데이터 정의 (요청하신 symptomsObject 구조로 통합)
+    let symptomsObject = { symptom_type: selectedSymptom };
+    
+    if (selectedSymptom === 'headache' || selectedSymptom === 'both') {
+        symptomsObject.headache = {
+            pain_level: document.querySelector('input[name="h_pain"]:checked')?.value,
+            sleep_time: document.getElementById('h_sleep_time')?.value,
+            start_time: document.getElementById('h_start')?.value
+        };
+    }
+    if (selectedSymptom === 'stomachache' || selectedSymptom === 'both') {
+        const checkedTypes = Array.from(document.querySelectorAll('input[name="s_type"]:checked')).map(el => el.value);
+        symptomsObject.stomachache = {
+            pain_level: document.querySelector('input[name="s_pain"]:checked')?.value,
+            start_time: document.getElementById('s_start')?.value,
+            food: document.getElementById('s_food')?.value,
+            types: checkedTypes
+        };
+    }
+    if (selectedSymptom === 'cold') {
+        const checkedCold = Array.from(document.querySelectorAll('input[name="cold_sym"]:checked')).map(el => el.value);
+        symptomsObject.cold = {
+            symptoms: checkedCold,
+            start_time: document.getElementById('c_start')?.value
+        };
+    }
+
+    // 2. Supabase에 보낼 전체 데이터 객체 구성
+    const dataToInsert = {
+        form_type: 'secondary',
+        school_name: schoolParam, // URL 파라미터 값
+        grade: document.getElementById('common_grade').value,
+        class_name: document.getElementById('common_class').value,
+        student_name: document.getElementById('common_name').value,
+        temperature: document.getElementById('common_temp').value,
+        main_symptom: selectedSymptom,
+        allergy: document.getElementById('common_allergy').value,
+        meds_today: document.getElementById('common_meds').value,
+        consent: document.querySelector('input[name="consent"]:checked')?.value,
+        symptoms: symptomsObject, // 👈 통합된 symptoms 객체 할당
+        created_at: new Date().toISOString()
+    };
+
+    try {
+        // 3. 통합된 형태로 Supabase 삽입
+        const { data, error } = await supabaseClient
+            .from('health_survey')
+            .insert([dataToInsert]);
+
+        if (error) throw error;
+        
+        alert('✅ 성공적으로 저장되었습니다!');
+        form.reset();
+        document.getElementById('detailSection').style.display = 'none';
+    } catch (err) {
+        console.error('Supabase 에러:', err);
+        alert('저장 실패: ' + err.message);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "제 출 하 기";
+    }
+});
+   
 </script>
 </body>
 </html>
