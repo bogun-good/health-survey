@@ -227,178 +227,163 @@
             <button type="submit" id="submitBtn">제 출 하 기</button>
         </form>
     </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
 
-    <script>
-        // DOMContentLoaded 이벤트를 통해 HTML 구조가 모두 렌더링된 후 가장 먼저 UI 기능부터 세팅합니다.
-        document.addEventListener('DOMContentLoaded', function() {
-            
-            // 1️⃣ [핵심 수정] UI 이벤트 연동 (에러에 방해받지 않도록 최상단에 배치)
-            const partMap = { 
-                "다쳤어요": "injury", 
-                "복통": "stomach", 
-                "머리(두통)": "head", 
-                "눈": "eye", 
-                "숨쉬기": "breathing", 
-                "기타": "etc" 
-            };
-            
-            const radios = document.querySelectorAll('input[name="body_part"]');
-            
-            radios.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    // 모든 디테일 박스를 먼저 숨깁니다.
-                    document.querySelectorAll('.detail-box').forEach(box => {
-                        box.style.display = 'none';
-                    });
-                    
-                    // 선택된 항목의 박스만 찾아서 보여줍니다.
-                    const key = partMap[this.value];
-                    if (key) {
-                        const targetBox = document.getElementById('detail-' + key);
-                        if (targetBox) {
-                            targetBox.style.display = 'block';
-                        }
-                    }
-                });
-            });
+    // ==================== 1. UI 이벤트 (기존 그대로 유지) ====================
+    const partMap = { 
+        "다쳤어요": "injury", 
+        "복통": "stomach", 
+        "머리(두통)": "head", 
+        "눈": "eye", 
+        "숨쉬기": "breathing", 
+        "기타": "etc" 
+    };
 
-            // 2️⃣ URL 파라미터(학교명) 연동 기능
-            try {
-                const urlParams = new URLSearchParams(window.location.search);
-                const schoolParam = urlParams.get('school_name') || urlParams.get('school') || '미지정';
-
-                const schoolInput = document.getElementById('school_name');
-                if (schoolInput) {
-                    schoolInput.value = schoolParam;
-                }
-            } catch(e) {
-                console.warn("URL 파라미터 처리 중 예외 발생 (UI 동작에는 영향 없음)");
+    document.querySelectorAll('input[name="body_part"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            document.querySelectorAll('.detail-box').forEach(box => box.style.display = 'none');
+            const key = partMap[this.value];
+            if (key) {
+                const target = document.getElementById('detail-' + key);
+                if (target) target.style.display = 'block';
             }
-
-            // 3️⃣ Supabase 초기화 (오류 발생 시 전체 프로그램이 멈추지 않도록 try-catch로 격리)
-            let supabaseClient = null;
-            try {
-                const SUPABASE_URL = "https://rcipjoyysyajwwxgiijj.supabase.co";
-                const SUPABASE_ANON_KEY = "sb_publishable_h9-xbTH8KPvyCwPVXZQNGA_SxI-8gHV";
-                
-                // 학교 보안망 등에 의해 supabase 라이브러리를 아예 불러오지 못했을 때를 대비한 방어 코드
-                if (typeof supabase !== 'undefined') {
-                    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                } else {
-                    console.warn("네트워크 차단 등의 이유로 Supabase 스크립트를 로드하지 못했습니다.");
-                }
-            } catch(e) {
-                console.warn("Supabase 초기화 중 에러 발생:", e);
-            }
-
-            // 4️⃣ 폼 제출(Submit) 기능
-            const form = document.getElementById('healthForm');
-            const submitBtn = document.getElementById('submitBtn');
-
-            form.addEventListener('submit', async function(e) {
-                e.preventDefault();
-
-                if (!supabaseClient) {
-                    alert('데이터베이스(Supabase)에 연결할 수 없는 상태입니다. 인터넷 환경이나 보안 설정을 확인해 주세요.');
-                    return;
-                }
-
-                submitBtn.disabled = true;
-                submitBtn.innerText = "Supabase에 저장 중...";
-
-                const selectedPart = document.querySelector('input[name="body_part"]:checked')?.value;
-                const data = {
-                    survey_type: 'elementary',           // ← 추가
-                    school_name: schoolParam,
-                    grade: document.getElementById('grade').value,
-                    class_name: document.getElementById('class_name').value,
-                    student_name: document.getElementById('student_name').value,
-                    main_symptom: selectedPart,          // ← body_part를 main_symptom으로
-                    allergy_detail: document.getElementById('allergy_detail').value || '없음',
-                    meds_today: '없음',                  // 필요시 입력 필드 추가 가능
-                    details: {                
-                        injury: selectedPart === '다쳤어요' ? {
-                            when: document.querySelector('input[name="injury_1"]')?.value,
-                            how: document.querySelector('input[name="injury_2"]')?.value,
-                            where: document.querySelector('input[name="injury_3"]')?.value,
-                            movable: document.querySelector('input[name="injury_4"]:checked')?.value,
-                            bleeding: document.querySelector('input[name="injury_5"]:checked')?.value,
-                            pain_level: document.querySelector('input[name="injury_pain"]:checked')?.value
-                        } : null,
-                        stomach: selectedPart === '복통' ? {
-                            when: document.querySelector('input[name="stomach_1"]')?.value,
-                            medicine: document.querySelector('input[name="stomach_2"]:checked')?.value,
-                            where: document.querySelector('input[name="stomach_3"]')?.value,
-                            vomit_diarrhea: document.querySelector('input[name="stomach_4"]:checked')?.value,
-                            nausea: document.querySelector('input[name="stomach_5"]:checked')?.value,
-                            overeat: document.querySelector('input[name="stomach_6"]:checked')?.value,
-                            menstruation: document.querySelector('input[name="stomach_7"]:checked')?.value,
-                            pain_level: document.querySelector('input[name="stomach_pain"]:checked')?.value
-                        } : null,
-                        head: selectedPart === '머리(두통)' ? {
-                            when: document.querySelector('input[name="head_1"]')?.value,
-                            medicine: document.querySelector('input[name="head_2"]:checked')?.value,
-                            hit: document.querySelector('input[name="head_3"]:checked')?.value,
-                            fever_stiff: document.querySelector('input[name="head_4"]:checked')?.value,
-                            sleep: document.querySelector('input[name="head_5"]:checked')?.value,
-                            vomit_dizzy: document.querySelector('input[name="head_6"]:checked')?.value,
-                            pain_level: document.querySelector('input[name="head_pain"]:checked')?.value
-                        } : null,
-                        eye: selectedPart === '눈' ? {
-                            when: document.querySelector('input[name="eye_1"]')?.value,
-                            which: document.querySelector('input[name="eye_2"]:checked')?.value,
-                            hit: document.querySelector('input[name="eye_3"]:checked')?.value,
-                            discharge: document.querySelector('input[name="eye_4"]:checked')?.value,
-                            itchy: document.querySelector('input[name="eye_5"]:checked')?.value,
-                            foreign: document.querySelector('input[name="eye_6"]:checked')?.value
-                        } : null,
-                        breathing: selectedPart === '숨쉬기' ? {
-                            when: document.querySelector('input[name="breath_1"]')?.value,
-                            inhaler: document.querySelector('input[name="breath_2"]:checked')?.value,
-                            shortness: document.querySelector('input[name="breath_3"]:checked')?.value,
-                            asthma: document.querySelector('input[name="breath_4"]:checked')?.value,
-                            hospital: document.querySelector('input[name="breath_5"]:checked')?.value
-                        } : null,
-                        etc: selectedPart === '기타' ? {
-                            when: document.querySelector('input[name="etc_1"]')?.value,
-                            where: document.querySelector('input[name="etc_2"]')?.value,
-                            injury: document.querySelector('input[name="etc_3"]:checked')?.value,
-                            rash: document.querySelector('input[name="etc_4"]:checked')?.value,
-                            bleeding_teeth: document.querySelector('input[name="etc_5"]:checked')?.value
-                        } : null
-                    },
-                    created_at: new Date().toISOString()
-                };
-
-                try {
-                    const { data: result, error } = await supabaseClient
-                        .from('health_survey')
-                        .insert([data]);
-
-                    if (error) throw error;
-
-                    alert('✅ 성공적으로 제출되었습니다!');
-                    form.reset();
-                    
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const schoolParam = urlParams.get('school');
-                    if (schoolParam) {
-                        document.getElementById('school_name').value = schoolParam;
-                    } else {
-                        document.getElementById('school_name').value = '미지정';
-                    }
-                    
-                    document.querySelectorAll('.detail-box').forEach(box => box.style.display = 'none');
-
-                } catch (err) {
-                    console.error('Supabase 저장 에러:', err);
-                    alert('저장 실패: ' + (err.message || err));
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.innerText = "제 출 하 기";
-                }
-            });
         });
-    </script>
+    });
+
+    // ==================== 2. 학교명 파라미터 처리 ====================
+    let schoolParam = '미지정';
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        schoolParam = urlParams.get('school_name') || urlParams.get('school') || '미지정';
+        const schoolInput = document.getElementById('school_name');
+        if (schoolInput) schoolInput.value = schoolParam;
+    } catch(e) {
+        console.warn("URL 파라미터 처리 중 예외:", e);
+    }
+
+    // ==================== 3. Supabase 초기화 ====================
+    let supabaseClient = null;
+    try {
+        const SUPABASE_URL = "https://rcipjoyysyajwwxgiijj.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_h9-xbTH8KPvyCwPVXZQNGA_SxI-8gHV";
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+    } catch(e) {
+        console.warn("Supabase 초기화 에러:", e);
+    }
+
+    // ==================== 4. 폼 제출 (통합 개선 버전) ====================
+    const form = document.getElementById('healthForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        if (!supabaseClient) {
+            alert('Supabase에 연결할 수 없습니다. 인터넷 환경을 확인해 주세요.');
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Supabase 전송 중...";
+
+        const selectedPart = document.querySelector('input[name="body_part"]:checked')?.value;
+
+        // === 전송 데이터 구성 (상세 데이터 전체 포함) ===
+        const dataToInsert = {
+            survey_type: 'elementary',
+            form_type: 'elementary',
+            school_name: schoolParam,
+            grade: document.getElementById('grade').value,
+            class_name: document.getElementById('class_name').value,
+            student_name: document.getElementById('student_name').value,
+            main_symptom: selectedPart,
+            allergy_detail: document.getElementById('allergy_detail').value || '없음',
+            meds_today: '없음',
+            details: {
+                body_part: selectedPart,
+                injury: selectedPart === '다쳤어요' ? {
+                    when: document.querySelector('input[name="injury_1"]')?.value,
+                    how: document.querySelector('input[name="injury_2"]')?.value,
+                    where: document.querySelector('input[name="injury_3"]')?.value,
+                    movable: document.querySelector('input[name="injury_4"]:checked')?.value,
+                    bleeding: document.querySelector('input[name="injury_5"]:checked')?.value,
+                    pain_level: document.querySelector('input[name="injury_pain"]:checked')?.value
+                } : null,
+                stomach: selectedPart === '복통' ? {
+                    when: document.querySelector('input[name="stomach_1"]')?.value,
+                    medicine: document.querySelector('input[name="stomach_2"]:checked')?.value,
+                    where: document.querySelector('input[name="stomach_3"]')?.value,
+                    vomit_diarrhea: document.querySelector('input[name="stomach_4"]:checked')?.value,
+                    nausea: document.querySelector('input[name="stomach_5"]:checked')?.value,
+                    overeat: document.querySelector('input[name="stomach_6"]:checked')?.value,
+                    menstruation: document.querySelector('input[name="stomach_7"]:checked')?.value,
+                    pain_level: document.querySelector('input[name="stomach_pain"]:checked')?.value
+                } : null,
+                head: selectedPart === '머리(두통)' ? {
+                    when: document.querySelector('input[name="head_1"]')?.value,
+                    medicine: document.querySelector('input[name="head_2"]:checked')?.value,
+                    hit: document.querySelector('input[name="head_3"]:checked')?.value,
+                    fever_stiff: document.querySelector('input[name="head_4"]:checked')?.value,
+                    sleep: document.querySelector('input[name="head_5"]:checked')?.value,
+                    vomit_dizzy: document.querySelector('input[name="head_6"]:checked')?.value,
+                    pain_level: document.querySelector('input[name="head_pain"]:checked')?.value
+                } : null,
+                eye: selectedPart === '눈' ? {
+                    when: document.querySelector('input[name="eye_1"]')?.value,
+                    which: document.querySelector('input[name="eye_2"]:checked')?.value,
+                    hit: document.querySelector('input[name="eye_3"]:checked')?.value,
+                    discharge: document.querySelector('input[name="eye_4"]:checked')?.value,
+                    itchy: document.querySelector('input[name="eye_5"]:checked')?.value,
+                    foreign: document.querySelector('input[name="eye_6"]:checked')?.value
+                } : null,
+                breathing: selectedPart === '숨쉬기' ? {
+                    when: document.querySelector('input[name="breath_1"]')?.value,
+                    inhaler: document.querySelector('input[name="breath_2"]:checked')?.value,
+                    shortness: document.querySelector('input[name="breath_3"]:checked')?.value,
+                    asthma: document.querySelector('input[name="breath_4"]:checked')?.value,
+                    hospital: document.querySelector('input[name="breath_5"]:checked')?.value
+                } : null,
+                etc: selectedPart === '기타' ? {
+                    when: document.querySelector('input[name="etc_1"]')?.value,
+                    where: document.querySelector('input[name="etc_2"]')?.value,
+                    injury: document.querySelector('input[name="etc_3"]:checked')?.value,
+                    rash: document.querySelector('input[name="etc_4"]:checked')?.value,
+                    bleeding_teeth: document.querySelector('input[name="etc_5"]:checked')?.value
+                } : null
+            },
+            created_at: new Date().toISOString()
+        };
+
+        try {
+            console.log("📤 전송 데이터:", dataToInsert);
+
+            const { data, error } = await supabaseClient
+                .from('health_survey')
+                .insert([dataToInsert], { returning: "minimal" });
+
+            if (error) {
+                console.error("❌ Supabase 에러:", error);
+                throw error;
+            }
+
+            console.log("✅ 저장 성공");
+            alert('✅ 성공적으로 제출되었습니다!');
+            form.reset();
+            document.querySelectorAll('.detail-box').forEach(box => box.style.display = 'none');
+
+        } catch (err) {
+            console.error("🔥 최종 에러:", err);
+            alert('저장 실패: ' + (err.message || JSON.stringify(err)));
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = "제 출 하 기";
+        }
+    });
+});
+</script>
+    
 </body>
 </html>
