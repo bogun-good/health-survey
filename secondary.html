@@ -93,11 +93,22 @@
         }
         .sub-q { margin-bottom: 22px; }
         .consent-text { color: red; font-size: 14px; line-height: 1.5; margin-top: 15px; font-weight: bold; }
+
+        /* 📱 스마트폰 화면(가로폭 500px 이하) 모바일 최적화 추가 */
+        @media (max-width: 500px) {
+            .info-row { 
+                flex-direction: column; 
+                gap: 15px; 
+            }
+            .info-box {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>🏥 학생 건강상태 문진 (중고등부)</h1>    
+    <h1>🏥 학생 건강상태 문진 (중고등)</h1>    
 
     <form id="healthForm">
         <h2>기본 정보</h2>
@@ -259,9 +270,6 @@
     let supabaseClient = null;
 
     const SUPABASE_URL = "https://rcipjoyysyajwwxgiijj.supabase.co";
-    // ⚠️ 중요: 아래 키는 Supabase Dashboard > Project Settings > API 에서 
-    // 'anon' 'public' 키 (eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... 형식의 긴 JWT)를 복사해서 붙여넣으세요.
-    // sb_publishable_ 형식은 insert 권한 문제로 저장이 안 될 수 있습니다.
     const SUPABASE_ANON_KEY ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjaXBqb3l5c3lhand3eGdpaWpqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNjAyOTgsImV4cCI6MjA5NDczNjI5OH0.OTOf0EziLjGod1IVCeNKewzoi2jFr9vsuNQcOPWDQtQ";
 
     if (!SUPABASE_URL.includes('YOUR-PROJECT')) {
@@ -337,7 +345,7 @@
             }
 
             const dataToInsert = {
-                form_type: 'secondary',           // ← 중고등부 구분 (중요!)
+                form_type: 'secondary',
                 school_name: schoolParam,
                 grade: document.getElementById('common_grade').value,
                 class_name: document.getElementById('common_class').value,
