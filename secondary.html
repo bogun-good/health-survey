@@ -76,15 +76,28 @@
         /* 제출하기 버튼 확대 */
         button { width: 100%; padding: 16px; background: #28a745; color: white; border: none; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 25px; }
         
-        .info-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
-        .info-box { flex: 1; min-width: 140px; }
+        .info-row { 
+            display: flex; 
+            gap: 12px; 
+            align-items: flex-start; 
+            flex-wrap: nowrap; 
+        }
+        .info-box { 
+            flex: 1; 
+            min-width: 120px;
+            display: flex;
+            flex-direction: column;
+        }
+        .info-box label {
+            margin-top: 0; /* 상단 여백 제거로 정렬 개선 */
+        }
         .sub-q { margin-bottom: 22px; }
         .consent-text { color: red; font-size: 14px; line-height: 1.5; margin-top: 15px; font-weight: bold; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>🏥 학생 건강상태 문진</h1>    
+    <h1>🏥 학생 건강상태 문진 (중고등부)</h1>    
 
     <form id="healthForm">
         <h2>기본 정보</h2>
@@ -97,10 +110,8 @@
                         <option value="1학년">1학년</option>
                         <option value="2학년">2학년</option>
                         <option value="3학년">3학년</option>
-                        <option value="4학년">4학년</option>
-                        <option value="5학년">5학년</option>
-                        <option value="6학년">6학년</option>
                     </select>
+                    <small style="color:#666; font-size:12px; margin-top:2px; display:block;">(중학교/고등학교 1~3학년)</small>
                 </div>
                 <div class="info-box">
                     <label>반</label>
@@ -176,13 +187,13 @@
         <div class="sub-q"><label>수면 시간 (시간)</label><input type="number" id="h_sleep_time" placeholder="어제 잔 시간(예: 7)"></div>
         <div class="sub-q"><label>언제부터 아팠나요?</label><input type="text" id="h_start" placeholder="예: 아침, 2교시"></div>
         <div class="sub-q"><label>유전성 두통이 있나요?</label><select id="h_genetic"><option value="아니요">아니요</option><option value="예">예</option></select></div>
-        <div class="sub-q"><label>두통으로 진료받았는지 여부 </label><select id="h_history"><option value="아니요">아니요</option><option value="예">예</option></select></div>
+        <div class="sub-q"><label>두통으로 진료받았는지 여부</label><select id="h_history"><option value="아니요">아니요</option><option value="예">예</option></select></div>
         <div class="sub-q"><label>최근 스트레스 여부</label><select id="h_stress"><option value="아니요">아니요</option><option value="예">예</option></select></div>
         <div class="sub-q"><label>추위에 노출 여부</label><select id="h_cold"><option value="아니요">아니요</option><option value="예">예</option></select></div>
         <div class="sub-q"><label>머리 충격 여부</label><select id="h_impact"><option value="아니요">아니요</option><option value="예">예</option></select></div>
         <div class="sub-q"><label>수면 부족 여부</label><select id="h_sleep_lack"><option value="아니요">아니요</option><option value="예">예</option></select></div>
-        <div class="sub-q"><label>편두통 진단 여부</label><select id="h_migraine"><option value="아니요">아니요</option><option value="예">예</option></select></div>
-        <div class="sub-q"><label>생리 여부</label><select id="h_period"><option value="해당 없음">해당 없음</option><option value="생리 전">생리 전</option><option value="생리 중">생리 중</option><option value="생리 끝">생리 끝</option></select></div>
+        <div class="sub-q"><label>편두통 진료 여부</label><select id="h_migraine"><option value="아니요">아니요</option><option value="예">예</option></select></div>
+        <div class="sub-q"><label>생리 여부 (여학생)</label><select id="h_period"><option value="해당 없음">해당 없음</option><option value="생리 전">생리 전</option><option value="생리 중">생리 중</option><option value="생리 끝">생리 끝</option></select></div>
     `;
 
     const stomachacheHTML = `
@@ -205,7 +216,7 @@
             </div>
         </div>
         <div class="sub-q"><label>통증 부위</label><select id="s_area"><option value="복부 오른쪽">복부 오른쪽</option><option value="복부 왼쪽">복부 왼쪽</option><option value="배 중앙">배 중앙</option><option value="명치">명치</option><option value="복부 전체">복부 전체</option></select></div>
-        <div class="sub-q"><label>생리 여부</label><select id="s_period"><option value="해당 없음">해당 없음</option><option value="생리 전">생리 전</option><option value="생리 중">생리 중</option><option value="생리 끝">생리 끝</option></select></div>
+        <div class="sub-q"><label>생리 여부 (여학생)</label><select id="s_period"><option value="해당 없음">해당 없음</option><option value="생리 전">생리 전</option><option value="생리 중">생리 중</option><option value="생리 끝">생리 끝</option></select></div>
     `;
 
     const coldHTML = `
@@ -248,7 +259,10 @@
     let supabaseClient = null;
 
     const SUPABASE_URL = "https://rcipjoyysyajwwxgiijj.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_h9-xbTH8KPvyCwPVXZQNGA_SxI-8gHV";
+    // ⚠️ 중요: 아래 키는 Supabase Dashboard > Project Settings > API 에서 
+    // 'anon' 'public' 키 (eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... 형식의 긴 JWT)를 복사해서 붙여넣으세요.
+    // sb_publishable_ 형식은 insert 권한 문제로 저장이 안 될 수 있습니다.
+    const SUPABASE_ANON_KEY ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjaXBqb3l5c3lhand3eGdpaWpqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNjAyOTgsImV4cCI6MjA5NDczNjI5OH0.OTOf0EziLjGod1IVCeNKewzoi2jFr9vsuNQcOPWDQtQ";
 
     if (!SUPABASE_URL.includes('YOUR-PROJECT')) {
         supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -274,7 +288,7 @@
             e.preventDefault();
 
             if (!supabaseClient) {
-                alert('Supabase에 연결할 수 없습니다.');
+                alert('Supabase에 연결할 수 없습니다. 키를 확인하세요.');
                 return;
             }
 
@@ -285,32 +299,45 @@
 
             let symptomsDetail = { symptom_type: selectedSymptom };
 
+            // 두통 또는 두통+복통
             if (selectedSymptom === 'headache' || selectedSymptom === 'both') {
                 symptomsDetail.headache = {
-                    pain_level: document.querySelector('input[name="h_pain"]:checked')?.value,
-                    sleep_time: document.getElementById('h_sleep_time')?.value,
-                    start_time: document.getElementById('h_start')?.value
+                    h_pain: document.querySelector('input[name="h_pain"]:checked')?.value || null,
+                    h_sleep_time: document.getElementById('h_sleep_time')?.value || null,
+                    h_start: document.getElementById('h_start')?.value || null,
+                    h_genetic: document.getElementById('h_genetic')?.value || null,
+                    h_history: document.getElementById('h_history')?.value || null,
+                    h_stress: document.getElementById('h_stress')?.value || null,
+                    h_cold: document.getElementById('h_cold')?.value || null,
+                    h_impact: document.getElementById('h_impact')?.value || null,
+                    h_sleep_lack: document.getElementById('h_sleep_lack')?.value || null,
+                    h_migraine: document.getElementById('h_migraine')?.value || null,
+                    h_period: document.getElementById('h_period')?.value || null
                 };
             }
+            // 복통 또는 두통+복통
             if (selectedSymptom === 'stomachache' || selectedSymptom === 'both') {
                 const checkedTypes = Array.from(document.querySelectorAll('input[name="s_type"]:checked')).map(el => el.value);
                 symptomsDetail.stomachache = {
-                    pain_level: document.querySelector('input[name="s_pain"]:checked')?.value,
-                    start_time: document.getElementById('s_start')?.value,
-                    food: document.getElementById('s_food')?.value,
-                    types: checkedTypes
+                    s_pain: document.querySelector('input[name="s_pain"]:checked')?.value || null,
+                    s_start: document.getElementById('s_start')?.value || null,
+                    s_food: document.getElementById('s_food')?.value || null,
+                    s_type: checkedTypes.length > 0 ? checkedTypes : null,
+                    s_area: document.getElementById('s_area')?.value || null,
+                    s_period: document.getElementById('s_period')?.value || null
                 };
             }
+            // 감기
             if (selectedSymptom === 'cold') {
                 const checkedCold = Array.from(document.querySelectorAll('input[name="cold_sym"]:checked')).map(el => el.value);
                 symptomsDetail.cold = {
-                    symptoms: checkedCold,
-                    start_time: document.getElementById('c_start')?.value
+                    cold_sym: checkedCold.length > 0 ? checkedCold : null,
+                    c_start: document.getElementById('c_start')?.value || null
                 };
             }
 
             const dataToInsert = {
-                form_type: 'secondary',
+                form_type: 'secondary',           // ← 중고등부 구분 (중요!)
                 school_name: schoolParam,
                 grade: document.getElementById('common_grade').value,
                 class_name: document.getElementById('common_class').value,
@@ -328,12 +355,12 @@
                 const { error } = await supabaseClient.from('health_survey').insert([dataToInsert]);
                 if (error) throw error;
 
-                alert('✅ 성공적으로 제출되었습니다!');
+                alert('✅ 성공적으로 제출되었습니다! (중고등부)');
                 form.reset();
                 document.getElementById('detailSection').style.display = 'none';
             } catch (err) {
                 console.error(err);
-                alert('저장 실패: ' + (err.message || err));
+                alert('저장 실패: ' + (err.message || err) + '\n\nSupabase RLS 정책 또는 anon 키를 확인하세요. (Dashboard > Authentication > Policies)');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerText = "제 출 하 기";
