@@ -127,8 +127,18 @@
                 <div class="sub-q"><label>배가 아파서 약을 먹고 왔나요?</label>
                     <div class="radio-inline"><label><input type="radio" name="stomach_2" value="네">네</label><label><input type="radio" name="stomach_2" value="아니오">아니오</label></div>
                 </div>
-                <div class="sub-q"><label>어디가 가장 아픈가요?</label><input type="text" name="stomach_3" placeholder="예: 배 오른쪽 / 배꼽 주변"></div>
-                <div class="sub-q"><label>토하거나 설사했나요?</label>
+                <div class="sub-q">
+                    <label>어디가 가장 아픈가요?</label>
+                    <select name="stomach_3" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px;">
+                        <option value="">선택해주세요</option>
+                        <option value="배 가운데">배 가운데</option>
+                        <option value="배 오른쪽">오른쪽 배</option>
+                        <option value="배 왼쪽"> 왼쪽 배</option>
+                        <option value="윗쪽 배">윗쪽 배</option>
+                        <option value="아래쪽 배">아래쪽 배</option>
+                    </select>
+                </div>
+                                <div class="sub-q"><label>토하거나 설사했나요?</label>
                     <div class="radio-inline"><label><input type="radio" name="stomach_4" value="토했음">토함</label><label><input type="radio" name="stomach_4" value="설사했음">설사</label><label><input type="radio" name="stomach_4" value="안했음">안함</label></div>
                 </div>
                 <div class="sub-q"><label>속이 울렁거리고 토할 것 같나요?</label>
@@ -311,10 +321,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     bleeding: document.querySelector('input[name="injury_5"]:checked')?.value,
                     pain_level: document.querySelector('input[name="injury_pain"]:checked')?.value
                 } : null,
+                 // === 수정된 데이터 전송 부분 ===
                 stomach: selectedPart === '복통' ? {
                     when: document.querySelector('input[name="stomach_1"]')?.value,
                     medicine: document.querySelector('input[name="stomach_2"]:checked')?.value,
-                    where: document.querySelector('input[name="stomach_3"]')?.value,
+                    where: document.querySelector('[name="stomach_3"]')?.value, // select 드롭다운과 input 모두 대응
                     vomit_diarrhea: document.querySelector('input[name="stomach_4"]:checked')?.value,
                     nausea: document.querySelector('input[name="stomach_5"]:checked')?.value,
                     overeat: document.querySelector('input[name="stomach_6"]:checked')?.value,
