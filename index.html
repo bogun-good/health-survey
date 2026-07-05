@@ -321,11 +321,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     bleeding: document.querySelector('input[name="injury_5"]:checked')?.value,
                     pain_level: document.querySelector('input[name="injury_pain"]:checked')?.value
                 } : null,
-                 // === 수정된 데이터 전송 부분 ===
                 stomach: selectedPart === '복통' ? {
                     when: document.querySelector('input[name="stomach_1"]')?.value,
                     medicine: document.querySelector('input[name="stomach_2"]:checked')?.value,
-                    where: document.querySelector('[name="stomach_3"]')?.value, // select 드롭다운과 input 모두 대응
+                    where: document.querySelector('[name="stomach_3"]')?.value,
                     vomit_diarrhea: document.querySelector('input[name="stomach_4"]:checked')?.value,
                     nausea: document.querySelector('input[name="stomach_5"]:checked')?.value,
                     overeat: document.querySelector('input[name="stomach_6"]:checked')?.value,
