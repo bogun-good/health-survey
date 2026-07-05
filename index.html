@@ -324,7 +324,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 stomach: selectedPart === '복통' ? {
                     when: document.querySelector('input[name="stomach_1"]')?.value,
                     medicine: document.querySelector('input[name="stomach_2"]:checked')?.value,
-                    where: document.querySelector('[name="stomach_3"]')?.value,
+                    where: document.querySelector('input[name="stomach_3"]')?.value,
                     vomit_diarrhea: document.querySelector('input[name="stomach_4"]:checked')?.value,
                     nausea: document.querySelector('input[name="stomach_5"]:checked')?.value,
                     overeat: document.querySelector('input[name="stomach_6"]:checked')?.value,
